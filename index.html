@@ -192,6 +192,7 @@
   .menu h2 { margin: 6px 0 0; font: italic 600 2.1rem/1.1 var(--font-serif); color: var(--gold); }
   .menu-intro { margin: 8px auto 0; max-width: 26em; color: var(--text-dim); font-size: .95rem; }
   .course { margin: 26px 0 0; padding: 0; border: 0; }
+  .course-note { margin: 10px 0 0; font-size: .92rem; font-weight: 600; line-height: 1.4; color: var(--gold); }
   .course legend { display: flex; align-items: center; gap: 10px; width: 100%; padding: 0; font: 600 1.45rem/1.2 var(--font-serif); color: var(--text); }
   .course legend::after { content: ""; flex: 1; height: 1px; background: var(--line); }
   .course-ico { width: 26px; height: 26px; flex: none; fill: none; stroke: var(--gold); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
@@ -364,17 +365,18 @@
         <div class="menu-head">
           <p class="eyebrow">Zum Aussuchen</p>
           <h2 id="menu-title">Dein Date-Menü</h2>
-          <p class="menu-intro">Such dir bei Vorspeise und Hauptgang eins aus. Wenn du mir die Wahl lassen willst, nimm „Überrasch mich“. Beim Nachtisch kannst du etwas aussuchen, musst du aber nicht.</p>
+          <p class="menu-intro">Bei der Vorspeise darfst du auch mehrere nehmen, beim Hauptgang such dir eins aus. Wenn du mir die Wahl lassen willst, nimm „Überrasch mich“. Beim Nachtisch kannst du etwas aussuchen, musst du aber nicht.</p>
         </div>
 
         <fieldset class="course">
           <legend><svg class="course-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 9h11v5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5z"/><path d="M16 10.5h1.4a2.4 2.4 0 0 1 0 4.8H16"/><path d="M8.5 3.5c-.6 1 .6 1.8 0 3M12 3.5c-.6 1 .6 1.8 0 3"/></svg>Vorspeise</legend>
+          <p class="course-note">Hier kannst du auch mehrere nehmen.</p>
           <div class="opts">
-            <label class="opt"><input type="radio" name="vorspeise" value="Heiße Schokolade to go"><span class="opt-face"><span class="opt-title">Heiße Schokolade to go</span><span class="opt-sub">mit Sahne, zum Aufwärmen in der Hand</span></span></label>
-            <label class="opt"><input type="radio" name="vorspeise" value="Ein Punsch auf dem Weihnachtsmarkt (Stuttgart)"><span class="opt-face"><span class="opt-title">Ein Punsch auf dem Weihnachtsmarkt</span><span class="opt-sub">auf dem Stuttgarter Weihnachtsmarkt, der hat ab dem 25. November offen</span></span></label>
-            <label class="opt"><input type="radio" name="vorspeise" value="Auf uns anstoßen"><span class="opt-face"><span class="opt-title">Auf uns anstoßen</span><span class="opt-sub">mit einem Glas auf unsere fünf Monate</span></span></label>
-            <label class="opt"><input type="radio" name="vorspeise" value="Eine kleine Überraschung von mir"><span class="opt-face"><span class="opt-title">Eine kleine Überraschung von mir</span><span class="opt-sub">mehr wird nicht verraten</span></span></label>
-            <label class="opt surprise"><input type="radio" name="vorspeise" value="Überrasch mich"><span class="opt-face"><span class="opt-title">Überrasch mich</span><span class="opt-sub">du entscheidest</span></span></label>
+            <label class="opt multi"><input type="checkbox" name="vorspeise" value="Heiße Schokolade to go"><span class="opt-face"><span class="opt-title">Heiße Schokolade to go</span><span class="opt-sub">mit Sahne, zum Aufwärmen in der Hand</span></span></label>
+            <label class="opt multi"><input type="checkbox" name="vorspeise" value="Ein Punsch auf dem Weihnachtsmarkt (Stuttgart)"><span class="opt-face"><span class="opt-title">Ein Punsch auf dem Weihnachtsmarkt</span><span class="opt-sub">auf dem Stuttgarter Weihnachtsmarkt, der hat ab dem 25. November offen</span></span></label>
+            <label class="opt multi"><input type="checkbox" name="vorspeise" value="Auf uns anstoßen"><span class="opt-face"><span class="opt-title">Auf uns anstoßen</span><span class="opt-sub">mit einem Glas auf unsere fünf Monate</span></span></label>
+            <label class="opt multi"><input type="checkbox" name="vorspeise" value="Eine kleine Überraschung von mir"><span class="opt-face"><span class="opt-title">Eine kleine Überraschung von mir</span><span class="opt-sub">mehr wird nicht verraten</span></span></label>
+            <label class="opt multi surprise"><input type="checkbox" name="vorspeise" value="Überrasch mich"><span class="opt-face"><span class="opt-title">Überrasch mich</span><span class="opt-sub">du entscheidest</span></span></label>
           </div>
         </fieldset>
 
@@ -441,6 +443,7 @@
   'use strict';
   var KEY = 'fuenf-monde-v2';
   var COURSES = ['vorspeise', 'hauptgang', 'nachtisch'];
+  var SURPRISE = 'Überrasch mich';
   var reduced = function () { return !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); };
   var $ = function (id) { return document.getElementById(id); };
 
@@ -491,21 +494,21 @@
   /* ---------- Auswahl, Ticket und Nachricht ---------- */
   function val(name) { var el = document.querySelector('input[name="' + name + '"]:checked'); return el ? el.value : ''; }
   function vals(name) { return Array.prototype.map.call(document.querySelectorAll('input[name="' + name + '"]:checked'), function (el) { return el.value; }); }
-  function dessert() { return vals('nachtisch').join(' + '); }
+  function picks(name) { return vals(name).join(' + '); }
   function whenText() { return THE_DAY + ' um ' + $('time').value + ' Uhr'; }
   function message() {
     return [
       'Ja, ich bin dabei! 🌙',
       'Unser 5-Monats-Date: ' + whenText(),
-      'Vorspeise: ' + (val('vorspeise') || 'Überrasch mich'),
-      'Hauptgang: ' + (val('hauptgang') || 'Überrasch mich'),
-      'Nachtisch: ' + (dessert() || 'entscheiden wir spontan'),
+      'Vorspeise: ' + (picks('vorspeise') || SURPRISE),
+      'Hauptgang: ' + (val('hauptgang') || SURPRISE),
+      'Nachtisch: ' + (picks('nachtisch') || 'entscheiden wir spontan'),
       'Ich freu mich auf dich ❤️'
     ].join('\n');
   }
   function update() {
     COURSES.forEach(function (c) {
-      var v = c === 'nachtisch' ? dessert() : val(c), dd = $('t-' + c);
+      var v = c === 'hauptgang' ? val(c) : picks(c), dd = $('t-' + c);
       dd.textContent = v || (c === 'nachtisch' ? 'freiwillig' : 'noch offen');
       dd.classList.toggle('open', !v);
     });
@@ -516,7 +519,7 @@
   function save() {
     try {
       localStorage.setItem(KEY, JSON.stringify({
-        c: [val('vorspeise'), val('hauptgang'), vals('nachtisch')], t: $('time').value, open: document.body.classList.contains('reading')
+        c: [vals('vorspeise'), val('hauptgang'), vals('nachtisch')], t: $('time').value, open: document.body.classList.contains('reading')
       }));
     } catch (e) { /* privater Modus */ }
   }
@@ -573,7 +576,16 @@
   if (wasOpen) openLetter(true);
 
   $('envelope').addEventListener('click', function () { openLetter(false); });
-  $('menu').addEventListener('change', update);
+  $('menu').addEventListener('change', function (e) {
+    var t = e.target;
+    /* Vorspeise: mehrere gehen, nur „Überrasch mich“ steht für sich allein */
+    if (t.name === 'vorspeise' && t.checked) {
+      Array.prototype.forEach.call(document.querySelectorAll('input[name="vorspeise"]'), function (el) {
+        if (el !== t && (t.value === SURPRISE || el.value === SURPRISE)) el.checked = false;
+      });
+    }
+    update();
+  });
   $('menu').addEventListener('submit', function (e) { e.preventDefault(); });
   $('send').addEventListener('click', function (e) {
     update();
