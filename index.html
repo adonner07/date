@@ -400,7 +400,7 @@
 
         <div class="ticket" aria-live="polite">
           <p class="ticket-k">Unser Date</p>
-          <h3 id="ticket-when">Do, 26. Nov. um 18:00 Uhr</h3>
+          <h3 id="ticket-when">Do, 26. Nov. um 19:00 Uhr</h3>
           <dl>
             <dt>Vorspeise</dt><dd id="t-vorspeise" class="open">noch offen</dd>
             <dt>Hauptgang</dt><dd id="t-hauptgang" class="open">noch offen</dd>
@@ -474,17 +474,8 @@
 
   /* ---------- Der Tag steht fest: Donnerstag, 26. November 2026 ---------- */
   var THE_DAY = 'Do, 26. Nov.';
-  function pad(n) { return (n < 10 ? '0' : '') + n; }
   function fillTimes() {
-    var html = '';
-    for (var h = 15; h <= 21; h++) {
-      for (var m = 0; m < 60; m += 30) {
-        if (h === 21 && m) break;
-        var t = h + ':' + pad(m);
-        html += '<option value="' + t + '"' + (t === '18:00' ? ' selected' : '') + '>' + t + ' Uhr</option>';
-      }
-    }
-    $('time').innerHTML = html;
+    $('time').innerHTML = ['19:00', '19:30'].map(function (t) { return '<option value="' + t + '">' + t + ' Uhr</option>'; }).join('');
   }
 
   /* ---------- Auswahl, Ticket und Nachricht ---------- */
