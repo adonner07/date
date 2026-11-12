@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fünf Monde</title>
+<meta name="description" content="Fünf Monate, ein Brief. Mach ihn auf.">
+<meta property="og:title" content="Post für dich 💌">
+<meta property="og:description" content="Fünf Monate, ein Brief. Mach ihn auf.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0b1026">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --night: #0b1026;
+    --dusk: #1d1640;
+    --plum: #2b1236;
+    --moon: #f6e7c1;
+    --moon-dark: #262a48;
+    --gold: #e7c27a;
+    --gold-deep: #c99a45;
+    --rose: #f2a7b8;
+    --wine: #7a1f3d;
+    --wine-dark: #561229;
+    --wax: #a3192f;
+    --paper: #fbf4e8;
+    --ink: #2b1d24;
+    --ink-dim: #6b5560;
+    --text: #f5eef7;
+    --text-dim: #c3b8d2;
+    --line: rgba(231, 194, 122, .28);
+    --font-hand: "Caveat", "Segoe Print", cursive;
+    --font-serif: "Cormorant Garamond", Georgia, serif;
+    --font-body: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+    color-scheme: dark;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: var(--night); }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
+    color: var(--text);
+    font: 500 1rem/1.55 var(--font-body);
+    background: linear-gradient(180deg, var(--night) 0%, var(--dusk) 52%, var(--plum) 100%) fixed;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* Sterne */
+  .sky { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+  .sky i { position: absolute; width: 2px; height: 2px; border-radius: 50%; background: #fff; opacity: .7; }
+  .sky i.tw { animation: twinkle 3.4s ease-in-out infinite alternate; }
+  @keyframes twinkle { from { opacity: .15; } to { opacity: .9; } }
+  .wrap { position: relative; z-index: 1; width: 100%; max-width: 560px; margin: 0 auto; padding: 0 max(18px, env(safe-area-inset-left)) 0 max(18px, env(safe-area-inset-right)); }
+  :focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+
+  /* ---------- Start: fünf Monde und der Brief ---------- */
+  .hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: max(28px, env(safe-area-inset-top)) 0 max(28px, env(safe-area-inset-bottom));
+    text-align: center;
+  }
+  .moons { display: block; width: min(100%, 420px); height: auto; overflow: visible; }
+  .moon-lit { fill: var(--moon); }
+  .moon-dark { fill: var(--moon-dark); }
+  .moon-n { fill: var(--gold); font: 700 12.5px var(--font-body); text-anchor: middle; letter-spacing: .08em; opacity: .85; }
+  .moon-glow { fill: url(#mglow); }
+  .eyebrow { margin: 6px 0 0; font: 700 .78rem/1.2 var(--font-body); letter-spacing: .3em; text-transform: uppercase; color: var(--gold); }
+  .hero-title { margin: 10px 0 0; font: 700 clamp(2.6rem, 12vw, 3.6rem)/1 var(--font-hand); color: var(--text); }
+  .hero-sub { max-width: 22em; margin: 10px auto 0; color: var(--text-dim); }
+
+  .envelope {
+    position: relative;
+    display: block;
+    width: min(84vw, 330px);
+    aspect-ratio: 1.55;
+    margin: 30px auto 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    perspective: 900px;
+    filter: drop-shadow(0 22px 26px rgba(0, 0, 0, .45));
+    animation: hover 3.6s ease-in-out infinite alternate;
+  }
+  @keyframes hover { from { transform: translateY(-3px) rotate(-1.2deg); } to { transform: translateY(4px) rotate(1deg); } }
+  .env-back, .env-front, .env-flap, .env-letter { position: absolute; display: block; }
+  .env-back { inset: 0; border-radius: 10px; background: linear-gradient(160deg, #8d2648, var(--wine-dark)); }
+  .env-letter {
+    left: 7%;
+    right: 7%;
+    top: 7%;
+    height: 86%;
+    z-index: 2;
+    display: grid;
+    place-items: start center;
+    padding-top: 9%;
+    border-radius: 6px;
+    background: var(--paper);
+    color: var(--wine);
+    font: 700 2rem/1 var(--font-hand);
+    transition: transform .9s cubic-bezier(.3, .7, .3, 1) .75s;
+  }
+  .env-front {
+    inset: 0;
+    z-index: 3;
+    border-radius: 10px;
+    background: linear-gradient(200deg, #9b2c51 0%, #7f1f40 55%, #6a1834 100%);
+    clip-path: polygon(0 0, 50% 54%, 100% 0, 100% 100%, 0 100%);
+  }
+  .env-front::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, rgba(255, 255, 255, .07), transparent 40%);
+    clip-path: polygon(0 100%, 50% 54%, 100% 100%);
+  }
+  .env-flap {
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 60%;
+    z-index: 4;
+    background: linear-gradient(180deg, #a5345a, #84203f);
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    transform-origin: 50% 0;
+    transition: transform .65s cubic-bezier(.5, 0, .3, 1) .2s, z-index 0s linear .5s;
+  }
+  .env-seal {
+    position: absolute;
+    left: 50%;
+    top: 60%;
+    z-index: 5;
+    width: 64px;
+    height: 64px;
+    margin: -38px 0 0 -32px;
+    transition: transform .45s ease, opacity .35s ease .15s;
+  }
+  .env-seal svg { display: block; width: 100%; height: 100%; overflow: visible; }
+  .wax { fill: url(#wax); }
+  .wax-edge { fill: none; stroke: rgba(0, 0, 0, .25); stroke-width: 1.5; }
+  .wax-emboss { fill: none; stroke: rgba(255, 220, 200, .55); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+  .wax-five { fill: rgba(255, 226, 206, .88); font: 700 17px var(--font-serif); text-anchor: middle; }
+  .tap-hint { margin: 22px 0 0; font: 700 .82rem/1 var(--font-body); letter-spacing: .2em; text-transform: uppercase; color: var(--rose); animation: pulse 1.8s ease-in-out infinite; }
+  @keyframes pulse { 50% { opacity: .45; } }
+  /* Öffnen */
+  .envelope.open { animation: none; transform: translateY(26px); transition: transform .5s ease; }
+  body.opening .hero-sub, body.opening .tap-hint { opacity: 0; transition: opacity .3s ease; }
+  .envelope.open .env-seal { transform: scale(1.25) rotate(-12deg); opacity: 0; }
+  .envelope.open .env-flap { transform: rotateX(180deg); z-index: 1; }
+  .envelope.open .env-letter { transform: translateY(-58%); }
+  body.reading .hero { min-height: 0; padding-bottom: 8px; }
+  body.reading .envelope, body.reading .tap-hint, body.reading .hero-sub { display: none; }
+
+  /* ---------- Brief ---------- */
+  .letter {
+    position: relative;
+    margin: 18px 0 0;
+    padding: 30px 22px 26px;
+    border-radius: 6px;
+    background: var(--paper);
+    color: var(--ink);
+    box-shadow: 0 30px 60px -30px rgba(0, 0, 0, .8);
+    animation: unfold .8s cubic-bezier(.3, .7, .3, 1) both;
+  }
+  @keyframes unfold { from { opacity: 0; transform: translateY(40px) scale(.96); } to { opacity: 1; transform: none; } }
+  .letter h1 { margin: 0; font: 700 clamp(2.3rem, 10vw, 2.9rem)/1.05 var(--font-hand); color: var(--wine); }
+  .letter p { margin: 14px 0 0; font-size: 1.04rem; line-height: 1.65; }
+  .letter .sign { margin-top: 18px; font: 700 1.7rem/1.1 var(--font-hand); color: var(--wine); }
+
+  /* ---------- Date-Menü ---------- */
+  .menu {
+    position: relative;
+    margin: 26px 0 0;
+    padding: 28px 18px 22px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: rgba(11, 16, 38, .72);
+    box-shadow: inset 0 0 0 5px rgba(11, 16, 38, .72), inset 0 0 0 6px rgba(231, 194, 122, .18);
+  }
+  .menu-head { text-align: center; }
+  .menu-head .eyebrow { margin: 0; }
+  .menu h2 { margin: 6px 0 0; font: italic 600 2.1rem/1.1 var(--font-serif); color: var(--gold); }
+  .menu-intro { margin: 8px auto 0; max-width: 26em; color: var(--text-dim); font-size: .95rem; }
+  .course { margin: 26px 0 0; padding: 0; border: 0; }
+  .course legend { display: flex; align-items: center; gap: 10px; width: 100%; padding: 0; font: 600 1.45rem/1.2 var(--font-serif); color: var(--text); }
+  .course legend::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  .course-ico { width: 26px; height: 26px; flex: none; fill: none; stroke: var(--gold); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  .opts { display: grid; gap: 8px; margin-top: 12px; }
+  .opt { position: relative; display: block; }
+  .opt input { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+  .opt-face {
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1fr);
+    gap: 2px 12px;
+    align-items: center;
+    min-height: 56px;
+    padding: 10px 14px;
+    border: 1.5px solid rgba(195, 184, 210, .22);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, .04);
+    transition: border-color .2s ease, background-color .2s ease, box-shadow .2s ease;
+  }
+  .opt-face::before {
+    content: "";
+    grid-row: span 2;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(195, 184, 210, .55);
+    border-radius: 50%;
+    transition: border-color .2s ease, background .2s ease;
+  }
+  .opt-title { font-weight: 700; line-height: 1.3; }
+  .opt-sub { grid-column: 2; font-size: .86rem; line-height: 1.35; color: var(--text-dim); }
+  .opt input:checked + .opt-face { border-color: var(--gold); background: rgba(231, 194, 122, .12); box-shadow: 0 0 0 1px var(--gold), 0 10px 26px -14px rgba(231, 194, 122, .7); }
+  .opt input:checked + .opt-face::before { border-color: var(--gold); background: radial-gradient(circle, var(--night) 0 3.5px, var(--gold) 4px); }
+  .opt input:focus-visible + .opt-face { outline: 3px solid var(--gold); outline-offset: 2px; }
+  .opt.surprise .opt-face { border-style: dashed; }
+
+  /* ---------- Wann ---------- */
+  .when { margin: 28px 0 0; padding: 0; border: 0; }
+  .when legend { display: flex; align-items: center; gap: 10px; width: 100%; padding: 0; font: 600 1.45rem/1.2 var(--font-serif); color: var(--text); }
+  .when legend::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+  .when-row { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 10px; margin-top: 12px; }
+  .field { display: grid; gap: 6px; }
+  .field span { font: 700 .74rem/1 var(--font-body); letter-spacing: .16em; text-transform: uppercase; color: var(--text-dim); }
+  select {
+    width: 100%;
+    min-height: 52px;
+    padding: 12px 38px 12px 14px;
+    border: 1.5px solid rgba(195, 184, 210, .3);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, .05) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23e7c27a' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") right 14px center / 12px 8px no-repeat;
+    color: var(--text);
+    font: 600 1rem/1.2 var(--font-body);
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  select option { color: #1b1530; }
+  .the-day { display: grid; align-content: center; min-height: 52px; margin: 0; padding: 8px 14px; border: 1.5px solid var(--gold); border-radius: 14px; background: rgba(231, 194, 122, .12); font-size: .82rem; line-height: 1.3; color: var(--text-dim); }
+  .the-day b { font-size: 1rem; color: var(--text); }
+  .moon-tip { margin: 10px 0 0; font-size: .88rem; color: var(--text-dim); }
+  .moon-tip b { color: var(--moon); }
+
+  /* ---------- Ticket ---------- */
+  .ticket {
+    position: relative;
+    margin: 28px 0 0;
+    padding: 20px 18px 18px;
+    border-radius: 16px;
+    background: linear-gradient(150deg, #f6e7c1, #ecd3a1);
+    color: #2b1d24;
+    box-shadow: 0 24px 50px -26px rgba(0, 0, 0, .9);
+  }
+  .ticket::before, .ticket::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 22px;
+    height: 22px;
+    margin-top: -11px;
+    border-radius: 50%;
+    background: #11142f;
+  }
+  .ticket::before { left: -11px; }
+  .ticket::after { right: -11px; }
+  .ticket-k { margin: 0; font: 800 .72rem/1 var(--font-body); letter-spacing: .26em; text-transform: uppercase; color: var(--wine); }
+  .ticket h3 { margin: 6px 0 12px; font: 700 2rem/1.05 var(--font-hand); color: var(--wine); }
+  .ticket dl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 14px; margin: 0; padding-top: 12px; border-top: 2px dashed rgba(122, 31, 61, .3); }
+  .ticket dt { font: 800 .74rem/1.6 var(--font-body); letter-spacing: .12em; text-transform: uppercase; color: #8a5a6a; }
+  .ticket dd { margin: 0; font-weight: 700; line-height: 1.4; overflow-wrap: anywhere; }
+  .ticket dd.open { font-weight: 500; font-style: italic; color: #8a7480; }
+
+  .actions { display: grid; gap: 10px; justify-items: center; margin: 24px 0 0; padding-bottom: max(40px, env(safe-area-inset-bottom)); }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 58px;
+    padding: 14px 24px;
+    border: 0;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #f2c27a, #e8957f 55%, #d86c8c);
+    color: #2a0f1b;
+    font: 800 1.12rem/1 var(--font-body);
+    text-decoration: none;
+    box-shadow: 0 16px 34px -16px rgba(232, 149, 127, .9), inset 0 -2px 0 rgba(0, 0, 0, .12);
+    cursor: pointer;
+  }
+  .btn svg { width: 22px; height: 22px; flex: none; }
+  .send-note { margin: 0; font-size: .86rem; color: var(--text-dim); text-align: center; }
+
+  /* ---------- Danach ---------- */
+  .after { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; min-height: 100dvh; padding: 40px 0; text-align: center; }
+  .big-moon { width: 190px; height: 190px; border-radius: 50%; background: radial-gradient(circle at 38% 34%, #fffaf0, var(--moon) 45%, #e3c98f 100%); box-shadow: 0 0 60px 18px rgba(246, 231, 193, .28), 0 0 140px 40px rgba(242, 167, 184, .14); animation: rise 1.4s cubic-bezier(.2, .8, .2, 1) both; position: relative; }
+  .big-moon::before, .big-moon::after { content: ""; position: absolute; border-radius: 50%; background: rgba(190, 160, 110, .28); }
+  .big-moon::before { width: 34px; height: 34px; left: 48px; top: 54px; }
+  .big-moon::after { width: 22px; height: 22px; left: 110px; top: 112px; }
+  @keyframes rise { from { transform: translateY(60px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .after h2 { margin: 30px 0 0; font: 700 clamp(2.4rem, 11vw, 3.2rem)/1.05 var(--font-hand); }
+  .after p { max-width: 22em; margin: 12px auto 0; color: var(--text-dim); }
+  .after .btn-text { margin-top: 26px; border: 0; background: none; color: var(--gold); font: 700 1rem/1 var(--font-body); text-decoration: underline; text-underline-offset: 4px; cursor: pointer; padding: 10px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .envelope, .tap-hint, .sky i.tw { animation: none; }
+    .env-letter, .env-flap, .env-seal { transition: none; }
+    .letter, .big-moon { animation: none; }
+  }
+</style>
+</head>
+<body>
+  <div class="sky" id="sky" aria-hidden="true"></div>
+
+  <main class="wrap">
+    <section class="hero" id="hero" aria-labelledby="hero-title">
+      <svg class="moons" id="moons" viewBox="0 0 420 150" role="img" aria-label="Fünf Monde, von der schmalen Sichel bis zum Vollmond"></svg>
+      <p class="eyebrow">Fünf Monate · fünf Monde</p>
+      <h1 class="hero-title" id="hero-title">Post für dich</h1>
+      <p class="hero-sub">Jeder Mond steht für einen Monat mit dir. Und jetzt ist er voll.</p>
+      <button type="button" class="envelope" id="envelope" aria-label="Brief öffnen">
+        <span class="env-back"></span>
+        <span class="env-letter" aria-hidden="true">Für dich</span>
+        <span class="env-front"></span>
+        <span class="env-flap"></span>
+        <span class="env-seal" aria-hidden="true">
+          <svg viewBox="0 0 64 64" focusable="false">
+            <defs><radialGradient id="wax" cx=".38" cy=".32" r=".75"><stop offset="0" stop-color="#d9364f"/><stop offset=".6" stop-color="#a3192f"/><stop offset="1" stop-color="#7a0f22"/></radialGradient></defs>
+            <path class="wax" d="M32 3c5 0 7 3 11 4s8 0 11 4 1 8 3 12 4 6 4 9-2 6-4 9-0 8-3 12-7 3-11 4-6 4-11 4-7-3-11-4-8 0-11-4-1-8-3-12-4-6-4-9 2-6 4-9 0-8 3-12 7-3 11-4 6-4 11-4z"/>
+            <circle class="wax-edge" cx="32" cy="32" r="19"/>
+            <path class="wax-emboss" d="M36 20a12 12 0 1 0 0 24 9.5 9.5 0 1 1 0-24z"/>
+            <text class="wax-five" x="38" y="37">5</text>
+          </svg>
+        </span>
+      </button>
+      <p class="tap-hint" id="tap-hint">Zum Öffnen tippen</p>
+    </section>
+
+    <section id="reading" hidden>
+      <article class="letter" aria-labelledby="letter-title">
+        <h1 id="letter-title" tabindex="-1">Fünf Monate,<br>du und ich</h1>
+        <p>Am 26. November sind es fünf Monate, seit aus dir und mir ein Wir geworden ist. Fünf Monde lang freue ich mich jetzt schon jeden Tag ein Stück mehr, dass es dich gibt.</p>
+        <p>Das will ich mit dir feiern, genau an diesem Tag, ganz in Ruhe, nur wir zwei. Deshalb bekommst du heute keine normale Nachricht, sondern eine richtige Einladung.</p>
+        <p>Stell dir unser Date zusammen wie ein Menü, such dir eine Uhrzeit aus und schick es mir. Um alles andere kümmere ich mich.</p>
+        <p class="sign">In Liebe</p>
+      </article>
+
+      <form class="menu" id="menu" aria-labelledby="menu-title" novalidate>
+        <div class="menu-head">
+          <p class="eyebrow">Zum Aussuchen</p>
+          <h2 id="menu-title">Dein Date-Menü</h2>
+          <p class="menu-intro">Such dir pro Gang eins aus. Wenn du mir die Wahl lassen willst, nimm „Überrasch mich“.</p>
+        </div>
+
+        <fieldset class="course">
+          <legend><svg class="course-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 9h11v5a5 5 0 0 1-5 5h-1a5 5 0 0 1-5-5z"/><path d="M16 10.5h1.4a2.4 2.4 0 0 1 0 4.8H16"/><path d="M8.5 3.5c-.6 1 .6 1.8 0 3M12 3.5c-.6 1 .6 1.8 0 3"/></svg>Vorspeise</legend>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="vorspeise" value="Heiße Schokolade to go"><span class="opt-face"><span class="opt-title">Heiße Schokolade to go</span><span class="opt-sub">mit Sahne, zum Aufwärmen in der Hand</span></span></label>
+            <label class="opt"><input type="radio" name="vorspeise" value="Mondschein-Spaziergang am Korber Kopf"><span class="opt-face"><span class="opt-title">Mondschein-Spaziergang am Korber Kopf</span><span class="opt-sub">mit Blick über das Remstal und die Lichter unten im Tal</span></span></label>
+            <label class="opt"><input type="radio" name="vorspeise" value="Eine kleine Überraschung von mir"><span class="opt-face"><span class="opt-title">Eine kleine Überraschung von mir</span><span class="opt-sub">mehr wird nicht verraten</span></span></label>
+            <label class="opt surprise"><input type="radio" name="vorspeise" value="Überrasch mich"><span class="opt-face"><span class="opt-title">Überrasch mich</span><span class="opt-sub">du entscheidest</span></span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="course">
+          <legend><svg class="course-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="13" r="7.5"/><circle cx="12" cy="13" r="4.2"/><path d="M3 4v6.5M3 7.5h2M21 4c-1.6 1.2-2.2 3-2.2 5.2v1.3H21M21 4v16"/></svg>Hauptgang</legend>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="hauptgang" value="Pizza aus dem Holzofen (Pizzeria Löwen, Winnenden)"><span class="opt-face"><span class="opt-title">Pizza aus dem Holzofen</span><span class="opt-sub">Pizza und Pasta in der Pizzeria Löwen in Winnenden</span></span></label>
+            <label class="opt"><input type="radio" name="hauptgang" value="Kino mit Popcorn (Traumpalast Waiblingen)"><span class="opt-face"><span class="opt-title">Kino mit Popcorn</span><span class="opt-sub">im Traumpalast Waiblingen, du suchst den Film aus</span></span></label>
+            <label class="opt"><input type="radio" name="hauptgang" value="Lichterzauber im Christmas Garden (Wilhelma Stuttgart)"><span class="opt-face"><span class="opt-title">Lichterzauber im Christmas Garden</span><span class="opt-sub">Hand in Hand durch die leuchtende Wilhelma in Stuttgart</span></span></label>
+            <label class="opt surprise"><input type="radio" name="hauptgang" value="Überrasch mich"><span class="opt-face"><span class="opt-title">Überrasch mich</span><span class="opt-sub">du entscheidest</span></span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="course">
+          <legend><svg class="course-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12.5h16l-1.6 7a1.5 1.5 0 0 1-1.5 1.1H7.1a1.5 1.5 0 0 1-1.5-1.1z"/><path d="M6 12.5a6 6 0 0 1 12 0"/><path d="M12 6.5V4M10.5 4.5l1.5-1 1.5 1"/></svg>Nachtisch</legend>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="nachtisch" value="Waffeln mit heißen Kirschen"><span class="opt-face"><span class="opt-title">Waffeln mit heißen Kirschen</span><span class="opt-sub">und Puderzucker, so viel du willst</span></span></label>
+            <label class="opt"><input type="radio" name="nachtisch" value="Kuscheldecke und Lieblingsserie"><span class="opt-face"><span class="opt-title">Kuscheldecke und Lieblingsserie</span><span class="opt-sub">Sofa, Snacks und du bestimmst, was läuft</span></span></label>
+            <label class="opt"><input type="radio" name="nachtisch" value="Ein Eis, auch wenn es kalt ist"><span class="opt-face"><span class="opt-title">Ein Eis, auch wenn es kalt ist</span><span class="opt-sub">weil man das zu zweit einfach machen muss</span></span></label>
+            <label class="opt surprise"><input type="radio" name="nachtisch" value="Überrasch mich"><span class="opt-face"><span class="opt-title">Überrasch mich</span><span class="opt-sub">du entscheidest</span></span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="when">
+          <legend>Wann?</legend>
+          <div class="when-row">
+            <div class="field"><span>Tag</span><p class="the-day"><b>Do, 26. Nov.</b> unser 5-Monats-Tag</p></div>
+            <label class="field"><span>Uhrzeit</span><select id="time" name="time" aria-label="Uhrzeit"></select></label>
+          </div>
+          <p class="moon-tip">Zwei Tage vorher, am 24. November, ist Vollmond. An unserem Abend ist der Mond also <b>noch fast voll</b>.</p>
+        </fieldset>
+
+        <div class="ticket" aria-live="polite">
+          <p class="ticket-k">Unser Date</p>
+          <h3 id="ticket-when">Do, 26. Nov. um 18:00 Uhr</h3>
+          <dl>
+            <dt>Vorspeise</dt><dd id="t-vorspeise" class="open">noch offen</dd>
+            <dt>Hauptgang</dt><dd id="t-hauptgang" class="open">noch offen</dd>
+            <dt>Nachtisch</dt><dd id="t-nachtisch" class="open">noch offen</dd>
+          </dl>
+        </div>
+
+        <div class="actions">
+          <a class="btn" id="send" href="https://wa.me/" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm0 18.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 4.54 0 8.24 3.7 8.24 8.24 0 4.54-3.7 8.24-8.24 8.24zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.11-.22-.17-.47-.29z"/></svg>
+            Ja, ich bin dabei
+          </a>
+          <p class="send-note" id="send-note" aria-live="polite">Deine Antwort geht per WhatsApp direkt an mich.</p>
+        </div>
+      </form>
+    </section>
+
+    <section class="after" id="after" hidden aria-labelledby="after-title">
+      <div class="big-moon" aria-hidden="true"></div>
+      <h2 id="after-title" tabindex="-1">Ich freu mich auf dich</h2>
+      <p id="after-text">Bis bald unterm Mond.</p>
+      <button type="button" class="btn-text" id="again">Nochmal ansehen</button>
+    </section>
+  </main>
+
+<script>
+(function () {
+  'use strict';
+  var KEY = 'fuenf-monde-v2';
+  var COURSES = ['vorspeise', 'hauptgang', 'nachtisch'];
+  var reduced = function () { return !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); };
+  var $ = function (id) { return document.getElementById(id); };
+
+  /* ---------- Sterne ---------- */
+  (function stars() {
+    var html = '', seed = 7;
+    var rnd = function () { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
+    for (var i = 0; i < 90; i++) {
+      var s = (rnd() * 1.6 + .8).toFixed(1);
+      html += '<i' + (i % 4 === 0 ? ' class="tw"' : '') + ' style="left:' + (rnd() * 100).toFixed(2) + '%;top:' + (rnd() * 100).toFixed(2) +
+        '%;width:' + s + 'px;height:' + s + 'px;animation-delay:-' + (rnd() * 3).toFixed(1) + 's"></i>';
+    }
+    $('sky').innerHTML = html;
+  })();
+
+  /* ---------- Fünf Monde: von der schmalen Sichel bis zum Vollmond ---------- */
+  (function moons() {
+    var data = [
+      { x: 46, y: 104, r: 15, f: .18 },
+      { x: 124, y: 74, r: 17, f: .38 },
+      { x: 210, y: 60, r: 19, f: .6 },
+      { x: 296, y: 74, r: 21, f: .82 },
+      { x: 374, y: 100, r: 28, f: 1 }
+    ];
+    var out = '<defs><radialGradient id="mglow"><stop offset="0" stop-color="#f6e7c1" stop-opacity=".45"/><stop offset=".55" stop-color="#f2a7b8" stop-opacity=".12"/><stop offset="1" stop-color="#f2a7b8" stop-opacity="0"/></radialGradient></defs>';
+    data.forEach(function (m, i) {
+      var top = (m.y - m.r).toFixed(1), bot = (m.y + m.r).toFixed(1);
+      if (m.f >= 1) out += '<circle class="moon-glow" cx="' + m.x + '" cy="' + m.y + '" r="' + (m.r * 2.6) + '"/>';
+      out += '<circle class="moon-dark" cx="' + m.x + '" cy="' + m.y + '" r="' + m.r + '"/>';
+      if (m.f >= 1) {
+        out += '<circle class="moon-lit" cx="' + m.x + '" cy="' + m.y + '" r="' + m.r + '"/>';
+      } else {
+        var a = Math.abs(1 - 2 * m.f) * m.r;
+        out += '<path class="moon-lit" d="M' + m.x + ' ' + top + 'A' + m.r + ' ' + m.r + ' 0 0 1 ' + m.x + ' ' + bot +
+          'A' + a.toFixed(2) + ' ' + m.r + ' 0 0 ' + (m.f > .5 ? 1 : 0) + ' ' + m.x + ' ' + top + 'Z"/>';
+      }
+      out += '<text class="moon-n" x="' + m.x + '" y="' + (m.y + m.r + 16) + '">' + (i + 1) + '</text>';
+    });
+    $('moons').innerHTML = out;
+  })();
+
+  /* ---------- Der Tag steht fest: Donnerstag, 26. November 2026 ---------- */
+  var THE_DAY = 'Do, 26. Nov.';
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function fillTimes() {
+    var html = '';
+    for (var h = 15; h <= 21; h++) {
+      for (var m = 0; m < 60; m += 30) {
+        if (h === 21 && m) break;
+        var t = h + ':' + pad(m);
+        html += '<option value="' + t + '"' + (t === '18:00' ? ' selected' : '') + '>' + t + ' Uhr</option>';
+      }
+    }
+    $('time').innerHTML = html;
+  }
+
+  /* ---------- Auswahl, Ticket und Nachricht ---------- */
+  function val(name) { var el = document.querySelector('input[name="' + name + '"]:checked'); return el ? el.value : ''; }
+  function whenText() { return THE_DAY + ' um ' + $('time').value + ' Uhr'; }
+  function message() {
+    return [
+      'Ja, ich bin dabei! 🌙',
+      'Unser 5-Monats-Date: ' + whenText(),
+      'Vorspeise: ' + (val('vorspeise') || 'Überrasch mich'),
+      'Hauptgang: ' + (val('hauptgang') || 'Überrasch mich'),
+      'Nachtisch: ' + (val('nachtisch') || 'Überrasch mich'),
+      'Ich freu mich auf dich ❤️'
+    ].join('\n');
+  }
+  function update() {
+    COURSES.forEach(function (c) {
+      var v = val(c), dd = $('t-' + c);
+      dd.textContent = v || 'noch offen';
+      dd.classList.toggle('open', !v);
+    });
+    $('ticket-when').textContent = whenText();
+    $('send').href = 'https://wa.me/?text=' + encodeURIComponent(message());
+    save();
+  }
+  function save() {
+    try {
+      localStorage.setItem(KEY, JSON.stringify({
+        c: COURSES.map(val), t: $('time').value, open: document.body.classList.contains('reading')
+      }));
+    } catch (e) { /* privater Modus */ }
+  }
+  function restore() {
+    var s = null;
+    try { s = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { s = null; }
+    if (!s) return false;
+    (s.c || []).forEach(function (v, i) {
+      if (!v) return;
+      var el = document.querySelector('input[name="' + COURSES[i] + '"][value="' + String(v).replace(/"/g, '') + '"]');
+      if (el) el.checked = true;
+    });
+    if (s.t && $('time').querySelector('option[value="' + s.t + '"]')) $('time').value = s.t;
+    return !!s.open;
+  }
+
+  /* ---------- Brief öffnen ---------- */
+  var opening = false;
+  function openLetter(instant) {
+    if (opening) return;
+    opening = true;
+    $('envelope').classList.add('open');
+    document.body.classList.add('opening');
+    var show = function () {
+      document.body.classList.add('reading');
+      $('reading').hidden = false;
+      $('tap-hint').hidden = true;
+      try { $('letter-title').focus({ preventScroll: true }); } catch (e) { /* egal */ }
+      if (!instant) {
+        var y = $('reading').getBoundingClientRect().top + window.scrollY;
+        window.scrollTo({ top: Math.max(0, y - 90), behavior: reduced() ? 'auto' : 'smooth' });
+      }
+      save();
+    };
+    if (instant || reduced()) show(); else setTimeout(show, 1650);
+  }
+
+  /* ---------- Abschicken und danach ---------- */
+  function showAfter() {
+    $('hero').hidden = true;
+    $('reading').hidden = true;
+    $('after').hidden = false;
+    var w = whenText();
+    $('after-text').textContent = 'Wir sehen uns am ' + w + '. Bis bald unterm Mond.';
+    window.scrollTo(0, 0);
+    try { $('after-title').focus({ preventScroll: true }); } catch (e) { /* egal */ }
+  }
+
+  fillTimes();
+  var wasOpen = restore();
+  update();
+  if (wasOpen) openLetter(true);
+
+  $('envelope').addEventListener('click', function () { openLetter(false); });
+  $('menu').addEventListener('change', update);
+  $('menu').addEventListener('submit', function (e) { e.preventDefault(); });
+  $('send').addEventListener('click', function (e) {
+    update();
+    setTimeout(showAfter, 700);
+  });
+  $('again').addEventListener('click', function () {
+    $('after').hidden = true;
+    $('hero').hidden = false;
+    $('reading').hidden = false;
+    $('menu').scrollIntoView({ block: 'start' });
+  });
+})();
+</script>
+</body>
+</html>
