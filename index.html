@@ -480,7 +480,7 @@
   /* ---------- Der Tag steht fest: Donnerstag, 26. November 2026 ---------- */
   var THE_DAY = 'Do, 26. Nov.';
   function fillTimes() {
-    $('time').innerHTML = ['19:00', '19:30'].map(function (t) { return '<option value="' + t + '">' + t + ' Uhr</option>'; }).join('');
+    $('time').innerHTML = ['18:00', '18:30', '19:00', '19:30'].map(function (t) { return '<option value="' + t + '"' + (t === '19:00' ? ' selected' : '') + '>' + t + ' Uhr</option>'; }).join('');
   }
 
   /* ---------- Auswahl, Ticket und Nachricht ---------- */
