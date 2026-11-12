@@ -225,6 +225,10 @@
   .opt input:checked + .opt-face::before { border-color: var(--gold); background: radial-gradient(circle, var(--night) 0 3.5px, var(--gold) 4px); }
   .opt input:focus-visible + .opt-face { outline: 3px solid var(--gold); outline-offset: 2px; }
   .opt.surprise .opt-face { border-style: dashed; }
+  .opt.multi .opt-face::before { border-radius: 6px; }
+  .opt.multi input:checked + .opt-face::before { border-color: var(--gold); background: var(--gold) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.4 6.3l2.3 2.3 4.9-5.1' fill='none' stroke='%230b1026' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 12px no-repeat; }
+  .opt-tag { order: 1; padding: 3px 9px; border: 1px solid var(--line); border-radius: 999px; font: 700 .7rem/1.2 var(--font-body); letter-spacing: .12em; text-transform: uppercase; color: var(--text-dim); }
+  .course legend::after { order: 2; }
 
   /* ---------- Wann ---------- */
   .when { margin: 28px 0 0; padding: 0; border: 0; }
@@ -352,7 +356,7 @@
         <p class="greet">Hey du,</p>
         <p>am 26. November sind wir fünf Monate zusammen. Fünf Monde, in denen aus dir und mir ein Wir geworden ist. Und ganz nebenbei bist du mein Lieblingsmensch geworden.</p>
         <p>Mit dir fühlen sich sogar ganz normale Tage besonders an. Ich lache mehr, ich vermisse dich schneller und ich freue mich jedes Mal, wenn ich dich sehe.</p>
-        <p>Deswegen will ich dich zu einem Date einladen. Unten wartet dein Date-Menü: Such dir Vorspeise und Hauptgang aus, nimm dir eine Uhrzeit und schick mir deine Antwort. Den Nachtisch habe ich schon geplant, um alles andere kümmere ich mich.</p>
+        <p>Deswegen will ich dich zu einem Date einladen. Unten wartet dein Date-Menü: Such dir Vorspeise und Hauptgang aus, wenn du magst auch einen Nachtisch, nimm dir eine Uhrzeit und schick mir deine Antwort. Um alles andere kümmere ich mich.</p>
         <p class="sign">In Liebe</p>
       </article>
 
@@ -360,7 +364,7 @@
         <div class="menu-head">
           <p class="eyebrow">Zum Aussuchen</p>
           <h2 id="menu-title">Dein Date-Menü</h2>
-          <p class="menu-intro">Such dir bei Vorspeise und Hauptgang eins aus. Wenn du mir die Wahl lassen willst, nimm „Überrasch mich“. Der Nachtisch steht schon fest.</p>
+          <p class="menu-intro">Such dir bei Vorspeise und Hauptgang eins aus. Wenn du mir die Wahl lassen willst, nimm „Überrasch mich“. Beim Nachtisch kannst du etwas aussuchen, musst du aber nicht.</p>
         </div>
 
         <fieldset class="course">
@@ -382,9 +386,11 @@
         </fieldset>
 
         <fieldset class="course">
-          <legend><svg class="course-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12.5h16l-1.6 7a1.5 1.5 0 0 1-1.5 1.1H7.1a1.5 1.5 0 0 1-1.5-1.1z"/><path d="M6 12.5a6 6 0 0 1 12 0"/><path d="M12 6.5V4M10.5 4.5l1.5-1 1.5 1"/></svg>Nachtisch</legend>
+          <legend><svg class="course-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 12.5h16l-1.6 7a1.5 1.5 0 0 1-1.5 1.1H7.1a1.5 1.5 0 0 1-1.5-1.1z"/><path d="M6 12.5a6 6 0 0 1 12 0"/><path d="M12 6.5V4M10.5 4.5l1.5-1 1.5 1"/></svg>Nachtisch<span class="opt-tag">freiwillig</span></legend>
           <div class="opts">
-            <label class="opt"><input type="radio" name="nachtisch" value="Late Night Drive" checked><span class="opt-face"><span class="opt-title">Late Night Drive</span><span class="opt-sub">mit deiner Lieblingsmusik durch die Nacht fahren und irgendwo anhalten, wo man die Lichter sieht</span></span></label>
+            <label class="opt multi"><input type="checkbox" name="nachtisch" value="Late Night Drive"><span class="opt-face"><span class="opt-title">Late Night Drive</span><span class="opt-sub">mit deiner Lieblingsmusik durch die Nacht fahren und irgendwo anhalten, wo man die Lichter sieht</span></span></label>
+            <label class="opt multi"><input type="checkbox" name="nachtisch" value="Mond und Sterne gucken"><span class="opt-face"><span class="opt-title">Mond und Sterne gucken</span><span class="opt-sub">irgendwohin fahren, wo es dunkel ist, Decke um uns und einfach in den Himmel schauen</span></span></label>
+            <label class="opt multi"><input type="checkbox" name="nachtisch" value="Mitternachtssnack am Drive-in"><span class="opt-face"><span class="opt-title">Mitternachtssnack am Drive-in</span><span class="opt-sub">Pommes und Milchshake im Auto, dazu unsere Lieblingslieder</span></span></label>
           </div>
         </fieldset>
 
@@ -403,7 +409,7 @@
           <dl>
             <dt>Vorspeise</dt><dd id="t-vorspeise" class="open">noch offen</dd>
             <dt>Hauptgang</dt><dd id="t-hauptgang" class="open">noch offen</dd>
-            <dt>Nachtisch</dt><dd id="t-nachtisch" class="open">noch offen</dd>
+            <dt>Nachtisch</dt><dd id="t-nachtisch" class="open">freiwillig</dd>
           </dl>
         </div>
 
@@ -479,6 +485,8 @@
 
   /* ---------- Auswahl, Ticket und Nachricht ---------- */
   function val(name) { var el = document.querySelector('input[name="' + name + '"]:checked'); return el ? el.value : ''; }
+  function vals(name) { return Array.prototype.map.call(document.querySelectorAll('input[name="' + name + '"]:checked'), function (el) { return el.value; }); }
+  function dessert() { return vals('nachtisch').join(' + '); }
   function whenText() { return THE_DAY + ' um ' + $('time').value + ' Uhr'; }
   function message() {
     return [
@@ -486,14 +494,14 @@
       'Unser 5-Monats-Date: ' + whenText(),
       'Vorspeise: ' + (val('vorspeise') || 'Überrasch mich'),
       'Hauptgang: ' + (val('hauptgang') || 'Überrasch mich'),
-      'Nachtisch: ' + (val('nachtisch') || 'Überrasch mich'),
+      'Nachtisch: ' + (dessert() || 'entscheiden wir spontan'),
       'Ich freu mich auf dich ❤️'
     ].join('\n');
   }
   function update() {
     COURSES.forEach(function (c) {
-      var v = val(c), dd = $('t-' + c);
-      dd.textContent = v || 'noch offen';
+      var v = c === 'nachtisch' ? dessert() : val(c), dd = $('t-' + c);
+      dd.textContent = v || (c === 'nachtisch' ? 'freiwillig' : 'noch offen');
       dd.classList.toggle('open', !v);
     });
     $('ticket-when').textContent = whenText();
@@ -503,7 +511,7 @@
   function save() {
     try {
       localStorage.setItem(KEY, JSON.stringify({
-        c: COURSES.map(val), t: $('time').value, open: document.body.classList.contains('reading')
+        c: [val('vorspeise'), val('hauptgang'), vals('nachtisch')], t: $('time').value, open: document.body.classList.contains('reading')
       }));
     } catch (e) { /* privater Modus */ }
   }
@@ -512,9 +520,11 @@
     try { s = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { s = null; }
     if (!s) return false;
     (s.c || []).forEach(function (v, i) {
-      if (!v) return;
-      var el = document.querySelector('input[name="' + COURSES[i] + '"][value="' + String(v).replace(/"/g, '') + '"]');
-      if (el) el.checked = true;
+      (Array.isArray(v) ? v : [v]).forEach(function (one) {
+        if (!one) return;
+        var el = document.querySelector('input[name="' + COURSES[i] + '"][value="' + String(one).replace(/"/g, '') + '"]');
+        if (el) el.checked = true;
+      });
     });
     if (s.t && $('time').querySelector('option[value="' + s.t + '"]')) $('time').value = s.t;
     return !!s.open;
