@@ -470,7 +470,7 @@
         <p>Geplant sind Couch, Kuscheldecke, Snacks und so viele Filme, wie wir schaffen. Dresscode: Jogginghose und Kuschelsocken.</p>
         <p>Unten liegt dein Zettel für die Eule. Such dir aus, welche Filme wir schauen, wann es losgeht und was wir naschen. Um alles andere kümmere ich mich.</p>
         <p class="sign">In Liebe</p>
-        <p class="ps">P.S. Ich erwarte deine Eule bis spätestens Freitag.</p>
+        <p class="ps">P.S. Ich erwarte deine Eule bis spätestens Donnerstag.</p>
       </article>
 
       <form class="menu" id="menu" aria-labelledby="menu-title" novalidate>
@@ -488,10 +488,11 @@
 
         <fieldset class="course">
           <legend><svg class="course-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>Wann?</legend>
+          <p class="course-note">Hier kannst du auch mehrere Tage nehmen, dann wird es ein richtiger Marathon.</p>
           <div class="opts">
-            <label class="opt"><input type="radio" name="tag" value="sa"><span class="opt-face"><span class="opt-title">Samstag, 21. November</span><span class="opt-sub">Filmabend mit Kuscheldecke</span></span></label>
-            <label class="opt"><input type="radio" name="tag" value="so"><span class="opt-face"><span class="opt-title">Sonntag, 22. November</span><span class="opt-sub">gemütlicher Sonntag auf der Couch</span></span></label>
-            <label class="opt"><input type="radio" name="tag" value="beide"><span class="opt-face"><span class="opt-title">Beide Tage</span><span class="opt-sub">für einen richtigen Marathon</span></span></label>
+            <label class="opt multi"><input type="checkbox" name="tag" value="fr"><span class="opt-face"><span class="opt-title">Freitag, 20. November</span><span class="opt-sub">Filmabend zum Start ins Wochenende</span></span></label>
+            <label class="opt multi"><input type="checkbox" name="tag" value="sa"><span class="opt-face"><span class="opt-title">Samstag, 21. November</span><span class="opt-sub">Filmabend mit Kuscheldecke</span></span></label>
+            <label class="opt multi"><input type="checkbox" name="tag" value="so"><span class="opt-face"><span class="opt-title">Sonntag, 22. November</span><span class="opt-sub">gemütlicher Sonntag auf der Couch</span></span></label>
           </div>
           <label class="field"><span>Ab wann?</span><select id="time" name="time"></select></label>
           <p class="tip" id="tip" aria-live="polite"></p>
@@ -608,11 +609,8 @@
     { t: 'Die Heiligtümer des Todes, Teil 1', m: 146 },
     { t: 'Die Heiligtümer des Todes, Teil 2', m: 130 }
   ];
-  var TAGE = {
-    sa: { kurz: 'Sa, 21. Nov.', lang: 'am Samstag, 21. November' },
-    so: { kurz: 'So, 22. Nov.', lang: 'am Sonntag, 22. November' },
-    beide: { kurz: 'Sa + So, 21./22. Nov.', lang: 'am Samstag und Sonntag' }
-  };
+  var TAGE = { fr: ['Fr', 20, 'Freitag'], sa: ['Sa', 21, 'Samstag'], so: ['So', 22, 'Sonntag'] };
+  var TAG_FOLGE = ['fr', 'sa', 'so'];
   var HAEUSER = { gryffindor: ['Gryffindor', '🦁'], hufflepuff: ['Hufflepuff', '🦡'], ravenclaw: ['Ravenclaw', '🦅'], slytherin: ['Slytherin', '🐍'] };
   var $ = function (id) { return document.getElementById(id); };
   var reduced = function () { return !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); };
@@ -639,7 +637,7 @@
   /* ---------- Hilfen ---------- */
   function dauer(min) {
     var h = Math.floor(min / 60), m = min % 60;
-    return (h ? h + ' Std.' : '') + (h && m ? ' ' : '') + (m ? m + ' Min.' : '');
+    return (h ? h + '\u00a0Std.' : '') + (h && m ? ' ' : '') + (m ? m + '\u00a0Min.' : '');
   }
   function uhr(min) { min = ((min % 1440) + 1440) % 1440; return ('0' + Math.floor(min / 60)).slice(-2) + ':' + ('0' + (min % 60)).slice(-2); }
   function vals(name) { return Array.prototype.map.call(document.querySelectorAll('input[name="' + name + '"]:checked'), function (el) { return el.value; }); }
@@ -673,21 +671,35 @@
     return n.length ? n.reduce(function (s, i) { return s + FILME[i - 1].m; }, 0) + PAUSE * (n.length - 1) : 0;
   }
   function startMin() { var p = $('time').value.split(':'); return +p[0] * 60 + +p[1]; }
+  function tage() { return TAG_FOLGE.filter(function (k) { return vals('tag').indexOf(k) >= 0; }); }
+  function tageKurz() {
+    var d = tage();
+    if (!d.length) return '';
+    if (d.length === 3) return 'Fr bis So, 20.–22. Nov.';
+    return d.map(function (k) { return TAGE[k][0]; }).join(' + ') + ', ' + d.map(function (k) { return TAGE[k][1]; }).join('./') + '. Nov.';
+  }
+  function tageLang() {
+    var d = tage();
+    if (!d.length) return 'am Wochenende';
+    if (d.length === 1) return 'am ' + TAGE[d[0]][2] + ', ' + TAGE[d[0]][1] + '. November';
+    if (d.length === 3) return 'von Freitag bis Sonntag';
+    return 'am ' + TAGE[d[0]][2] + ' und ' + TAGE[d[1]][2];
+  }
   function punkt(s) { return /\.$/.test(s) ? s : s + '.'; }
   function tipText() {
-    var z = laufzeit(), t = val('tag'), n = filmNums().length;
+    var z = laufzeit(), d = tage().length, n = filmNums().length;
     if (!z) return punkt('Kleiner Tipp: Alle acht Filme zusammen dauern ' + dauer(FILME.reduce(function (s, f) { return s + f.m; }, 0)));
     var s = punkt(n > 1 ? 'Mit kurzen Pausen dazwischen sind das ' + dauer(z) : 'Der Film dauert ' + dauer(z));
-    if (t === 'beide') return s + (n > 1 ? ' Schön verteilt auf zwei Tage.' : ' Da passt am zweiten Tag locker noch einer rein.');
+    if (d > 1) return s + (n > 1 ? ' Schön verteilt auf ' + (d === 2 ? 'zwei' : 'drei') + ' Tage.' : d === 2 ? ' Da passt am zweiten Tag locker noch einer rein.' : ' Da passen an den anderen Tagen locker noch ein paar rein.');
     var end = startMin() + z;
     s += ' Der Abspann läuft dann gegen ' + uhr(end) + ' Uhr' + (end >= 1440 ? ' nachts' : '') + '.';
-    if (end >= 1500) s += ' Das wird eine lange Nacht. Vielleicht lieber beide Tage?';
+    if (end >= 1500) s += ' Das wird eine lange Nacht. Vielleicht lieber auf mehrere Tage verteilen?';
     return s;
   }
   function message() {
-    var t = val('tag'), h = val('haus');
+    var t = tageKurz(), h = val('haus');
     var lines = ['Ja, ich bin dabei! ⚡'];
-    lines.push('Harry-Potter-Wochenende: ' + (t ? TAGE[t].kurz + ' ab ' + $('time').value + ' Uhr' : 'ab ' + $('time').value + ' Uhr, den Tag sprechen wir noch ab'));
+    lines.push('Harry-Potter-Wochenende: ' + (t ? t + ' ab ' + $('time').value + ' Uhr' : 'ab ' + $('time').value + ' Uhr, den Tag sprechen wir noch ab'));
     lines.push('Filme: ' + (filmText() || SURPRISE));
     lines.push('Snacks: ' + (vals('snacks').join(' + ') || SURPRISE));
     if (h) lines.push('Mein Haus: ' + HAEUSER[h][0] + ' ' + HAEUSER[h][1]);
@@ -701,7 +713,7 @@
     setDD('t-zeit', z ? dauer(z) + (filmNums().length > 1 ? ' mit Pausen' : '') : '', 'kommt auf die Filme an');
     setDD('t-snacks', vals('snacks').join(' + '), 'noch offen');
     setDD('t-haus', h ? HAEUSER[h][0] : '', 'freiwillig');
-    $('ticket-when').textContent = val('tag') ? TAGE[val('tag')].kurz : 'Tag noch offen';
+    $('ticket-when').textContent = tageKurz() || 'Tag noch offen';
     $('ticket-time').textContent = 'Abfahrt ' + $('time').value + ' Uhr';
     $('tip').textContent = tipText();
     if (h) document.body.setAttribute('data-haus', h); else document.body.removeAttribute('data-haus');
@@ -711,7 +723,7 @@
   function save() {
     try {
       localStorage.setItem(KEY, JSON.stringify({
-        f: vals('filme'), s: vals('snacks'), tag: val('tag'), haus: val('haus'), t: $('time').value,
+        f: vals('filme'), s: vals('snacks'), tag: tage(), haus: val('haus'), t: $('time').value,
         open: document.body.classList.contains('reading'), seen: seen
       }));
     } catch (e) { /* privater Modus */ }
@@ -727,7 +739,8 @@
     var s = null;
     try { s = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { s = null; }
     if (!s) return null;
-    tick('filme', s.f); tick('snacks', s.s); tick('tag', [s.tag]); tick('haus', [s.haus]);
+    tick('filme', s.f); tick('snacks', s.s); tick('haus', [s.haus]);
+    tick('tag', Array.isArray(s.tag) ? s.tag : s.tag === 'beide' ? ['sa', 'so'] : [s.tag]);
     if (s.t && $('time').querySelector('option[value="' + s.t + '"]')) $('time').value = s.t;
     return s;
   }
@@ -929,11 +942,10 @@
 
   /* ---------- Abschicken und danach ---------- */
   function showAfter() {
-    var t = val('tag');
     $('hero').hidden = true;
     $('reading').hidden = true;
     $('after').hidden = false;
-    $('after-text').textContent = 'Wir sehen uns ' + (t ? TAGE[t].lang : 'am Wochenende') + ' ab ' + $('time').value + ' Uhr. Die Kuscheldecke liegt schon bereit.';
+    $('after-text').textContent = 'Wir sehen uns ' + tageLang() + ' ab ' + $('time').value + ' Uhr. Die Kuscheldecke liegt schon bereit.';
     window.scrollTo(0, 0);
     try { $('after-title').focus({ preventScroll: true }); } catch (e) { /* egal */ }
     flyAway();
