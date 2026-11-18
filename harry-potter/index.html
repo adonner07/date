@@ -1,0 +1,975 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Eulenpost</title>
+<meta name="description" content="Eine Eule hat einen Brief für dich gebracht. Mach ihn auf.">
+<meta property="og:title" content="Eulenpost für dich ⚡">
+<meta property="og:description" content="Eine Eule hat einen Brief für dich gebracht. Mach ihn auf.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://adonner07.github.io/date/harry-potter/">
+<meta property="og:image" content="https://adonner07.github.io/date/harry-potter/vorschau.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Eine weiße Eule bringt einen versiegelten Brief, dazu schwebende Kerzen am Nachthimmel">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#0d0b1f">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Cinzel+Decorative:wght@700&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --night: #0d0b1f;
+    --dusk: #1a1536;
+    --deep: #23122e;
+    --accent: #f0c674;
+    --glow: #4a2a78;
+    --band-a: #6e1d3c;
+    --band-b: #e7c27a;
+    --paper: #f5ead0;
+    --ink: #2b2016;
+    --ink-dim: #6f5c45;
+    --green-ink: #1f5136;
+    --text: #f4eef8;
+    --text-dim: #c5bcd6;
+    --line: rgba(240, 198, 116, .28);
+    --font-deco: "Cinzel Decorative", "Cormorant Garamond", Georgia, serif;
+    --font-hand: "Caveat", "Segoe Print", cursive;
+    --font-serif: "Cormorant Garamond", Georgia, serif;
+    --font-body: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+    color-scheme: dark;
+  }
+  /* Die Seite trägt die Farben des gewählten Hauses */
+  body[data-haus="gryffindor"] { --accent: #f4b740; --glow: #8a1a1d; --band-a: #8e1418; --band-b: #e8ad35; }
+  body[data-haus="hufflepuff"] { --accent: #ffd54d; --glow: #8a6a10; --band-a: #f0c232; --band-b: #2a2520; }
+  body[data-haus="ravenclaw"] { --accent: #94b8ff; --glow: #1f3d94; --band-a: #1d3b84; --band-b: #c48a4c; }
+  body[data-haus="slytherin"] { --accent: #82d6a5; --glow: #15603a; --band-a: #1a5a38; --band-b: #c3ccd3; }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; background: var(--night); overflow-x: hidden; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    min-height: 100dvh;
+    color: var(--text);
+    font: 500 1rem/1.55 var(--font-body);
+    background: linear-gradient(180deg, var(--night) 0%, var(--dusk) 55%, var(--deep) 100%) fixed;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+  /* ---------- Himmel: Schein, Sterne, schwebende Kerzen ---------- */
+  .glow {
+    position: fixed;
+    left: 50%;
+    top: -40vh;
+    z-index: 0;
+    width: 150vw;
+    height: 80vh;
+    margin-left: -75vw;
+    border-radius: 50%;
+    background-color: var(--glow);
+    opacity: .34;
+    filter: blur(70px);
+    pointer-events: none;
+    transition: background-color 1s ease;
+  }
+  .sky, .candles { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+  .sky i { position: absolute; width: 2px; height: 2px; border-radius: 50%; background: #fff; opacity: .7; }
+  .sky i.tw { animation: twinkle 3.4s ease-in-out infinite alternate; }
+  @keyframes twinkle { from { opacity: .15; } to { opacity: .9; } }
+  .candle {
+    position: absolute;
+    width: 8px;
+    height: var(--h, 40px);
+    border-radius: 2px 2px 3px 3px;
+    background: linear-gradient(90deg, #cfc2a6, #fbf5e6 45%, #d6c9ad);
+    opacity: var(--o, .85);
+    animation: bob var(--d, 5s) ease-in-out var(--dl, 0s) infinite alternate;
+  }
+  .candle::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: -34px;
+    width: 58px;
+    height: 58px;
+    margin-left: -29px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255, 190, 100, .42), rgba(255, 190, 100, 0) 68%);
+  }
+  .candle::after { content: ""; position: absolute; left: 50%; top: -4px; width: 1.5px; height: 5px; margin-left: -.75px; background: #3b2a1a; }
+  .flame {
+    position: absolute;
+    left: 50%;
+    top: -16px;
+    width: 7px;
+    height: 13px;
+    margin-left: -3.5px;
+    border-radius: 50% 50% 45% 45% / 62% 62% 38% 38%;
+    background: radial-gradient(circle at 50% 72%, #fffbe6 0 22%, #ffd257 48%, #ff8f24 85%);
+    transform-origin: 50% 100%;
+    animation: flick 1.1s ease-in-out var(--dl, 0s) infinite alternate;
+  }
+  @keyframes bob { from { transform: translateY(-7px) scale(var(--s, 1)); } to { transform: translateY(7px) scale(var(--s, 1)); } }
+  @keyframes flick { from { transform: scale(1, 1) rotate(-3deg); } to { transform: scale(.86, 1.12) rotate(3deg); } }
+
+  .wrap { position: relative; z-index: 1; width: 100%; max-width: 560px; margin: 0 auto; padding: 0 max(18px, env(safe-area-inset-right)) 0 max(18px, env(safe-area-inset-left)); }
+
+  /* ---------- Start: die Eule bringt den Brief ---------- */
+  .hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    min-height: 100dvh;
+    padding: max(28px, env(safe-area-inset-top)) 0 max(28px, env(safe-area-inset-bottom));
+    text-align: center;
+  }
+  .hero-text, .tap-hint { transition: opacity .7s ease, transform .7s ease; }
+  body.intro .hero-text, body.intro .tap-hint { opacity: 0; transform: translateY(8px); }
+  .eyebrow { margin: 0; font: 700 .76rem/1.2 var(--font-body); letter-spacing: .3em; text-transform: uppercase; color: var(--accent); transition: color .6s ease; }
+  .hero-title { margin: 12px 0 0; font: 700 clamp(1.9rem, 8.6vw, 2.6rem)/1.08 var(--font-deco); color: var(--text); text-shadow: 0 0 22px rgba(240, 198, 116, .35); }
+  .hero-sub { max-width: 21em; margin: 10px auto 0; color: var(--text-dim); }
+
+  .envelope {
+    position: relative;
+    display: block;
+    width: min(84vw, 330px);
+    aspect-ratio: 1.55;
+    margin: 34px auto 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+  body.intro .envelope:not(.fly) { visibility: hidden; }
+  .envelope.fly { position: fixed; left: 0; top: 0; z-index: 4; margin: 0; pointer-events: none; transform-origin: 50% 50%; will-change: transform; }
+  .env-float { position: absolute; inset: 0; display: block; perspective: 900px; filter: drop-shadow(0 22px 26px rgba(0, 0, 0, .5)); }
+  .envelope.landed .env-float { animation: hover 3.6s ease-in-out infinite alternate; }
+  @keyframes hover { from { transform: translateY(-3px) rotate(-1.2deg); } to { transform: translateY(4px) rotate(1deg); } }
+  .env-back, .env-front, .env-flap, .env-letter, .env-seal { position: absolute; display: block; }
+  .env-back { inset: 0; border-radius: 8px; background: linear-gradient(160deg, #dcc596, #c4a873); }
+  .env-letter {
+    left: 7%;
+    right: 7%;
+    top: 7%;
+    height: 86%;
+    z-index: 2;
+    display: grid;
+    place-items: start center;
+    padding-top: 9%;
+    border-radius: 4px;
+    background: #fbf6e8;
+    color: var(--green-ink);
+    font: 700 2rem/1 var(--font-hand);
+    transition: transform .9s cubic-bezier(.3, .7, .3, 1) .75s;
+  }
+  .env-front {
+    inset: 0;
+    z-index: 3;
+    border-radius: 8px;
+    background: linear-gradient(200deg, #f4e8cb 0%, #ebdab3 58%, #e0caa0 100%);
+    clip-path: polygon(0 0, 50% 44%, 100% 0, 100% 100%, 0 100%);
+  }
+  .env-front::after { content: ""; position: absolute; inset: 0; background: linear-gradient(160deg, rgba(255, 255, 255, .2), transparent 45%); clip-path: polygon(0 100%, 50% 44%, 100% 100%); }
+  .env-addr { position: absolute; left: 6%; right: 6%; bottom: 8%; display: block; font: 700 clamp(.86rem, 4.4vw, 1.08rem)/1.15 var(--font-hand); color: var(--green-ink); text-align: center; }
+  .env-flap {
+    left: 0;
+    right: 0;
+    top: 0;
+    height: 48%;
+    z-index: 4;
+    background: linear-gradient(180deg, #f2e4c2, #e2cda0);
+    clip-path: polygon(0 0, 100% 0, 50% 100%);
+    transform-origin: 50% 0;
+    transition: transform .65s cubic-bezier(.5, 0, .3, 1) .2s, z-index 0s linear .5s;
+  }
+  .env-seal { left: 50%; top: 46%; z-index: 5; width: 54px; height: 54px; margin: -30px 0 0 -27px; transition: transform .45s ease, opacity .35s ease .15s; }
+  .env-seal svg, .after-seal svg { display: block; width: 100%; height: 100%; overflow: visible; }
+  .wax { fill: url(#wax); }
+  .wax-edge { fill: none; stroke: rgba(0, 0, 0, .25); stroke-width: 1.5; }
+  .wax-bolt { fill: rgba(255, 226, 206, .88); stroke: rgba(90, 10, 20, .35); stroke-width: .8; stroke-linejoin: round; }
+  .tap-hint { margin: 22px 0 0; font: 700 .8rem/1 var(--font-body); letter-spacing: .2em; text-transform: uppercase; color: var(--accent); }
+  body:not(.intro) .tap-hint { animation: pulse 1.8s ease-in-out infinite; }
+  @keyframes pulse { 50% { opacity: .45; } }
+  /* Öffnen */
+  .envelope.open { transform: translateY(26px); transition: transform .5s ease; }
+  .envelope.open .env-float { animation: none; }
+  body.opening .hero-sub, body.opening .tap-hint { opacity: 0; transition: opacity .3s ease; }
+  .envelope.open .env-seal { transform: scale(1.25) rotate(-12deg); opacity: 0; }
+  .envelope.open .env-flap { transform: rotateX(180deg); z-index: 1; }
+  .envelope.open .env-letter { transform: translateY(-58%); }
+  body.reading .hero { min-height: 0; padding-bottom: 8px; }
+  body.reading .envelope, body.reading .tap-hint, body.reading .hero-sub { display: none; }
+
+  /* ---------- Die Eule und ihre Feder ---------- */
+  .owl { position: fixed; left: 0; top: 0; z-index: 6; display: block; width: min(170px, 44vw); height: auto; overflow: visible; pointer-events: none; visibility: hidden; will-change: transform; }
+  .owl .wing { fill: url(#owl-wing); stroke: #c2b7a3; stroke-width: .8; stroke-linejoin: round; }
+  .owl .bars { fill: none; stroke: #988d7b; stroke-width: 1.2; stroke-linecap: round; opacity: .75; }
+  .owl .tail { fill: #ebe5d8; stroke: #c2b7a3; stroke-width: .8; stroke-linejoin: round; }
+  .owl .torso { fill: url(#owl-body); }
+  .owl .spots { fill: none; stroke: #9b917f; stroke-width: 1.1; stroke-linecap: round; stroke-linejoin: round; opacity: .8; }
+  .owl .head { fill: #f7f4ee; }
+  .owl .face { fill: #fdfcf9; stroke: #e2dccf; stroke-width: .8; }
+  .owl .iris { fill: #f5c32c; stroke: #3a2b16; stroke-width: .7; }
+  .owl .pupil { fill: #18110a; }
+  .owl .glint { fill: #fff; }
+  .owl .beak { fill: #3d3329; }
+  .owl .feet { fill: none; stroke: #6b5636; stroke-width: 1.6; stroke-linecap: round; }
+  .owl .mini-env { fill: #f1e3bf; stroke: #b99d67; stroke-width: .7; }
+  .owl .mini-flap { fill: none; stroke: #b99d67; stroke-width: .8; stroke-linejoin: round; }
+  .owl .mini-seal { fill: #8e1c2c; }
+  #owl-letter { display: none; }
+  .owl.mit-brief #owl-letter { display: inline; }
+  .feather { position: fixed; left: 0; top: 0; z-index: 6; display: block; width: 16px; height: auto; pointer-events: none; visibility: hidden; will-change: transform; }
+
+  /* ---------- Brief ---------- */
+  .letter {
+    position: relative;
+    margin: 18px 0 0;
+    padding: 30px 22px 26px;
+    border-radius: 6px;
+    background: var(--paper) linear-gradient(180deg, rgba(255, 255, 255, .35), rgba(255, 255, 255, 0) 30%);
+    color: var(--ink);
+    box-shadow: 0 30px 60px -30px rgba(0, 0, 0, .85), inset 0 0 0 1px rgba(122, 92, 40, .25), inset 0 0 0 7px var(--paper), inset 0 0 0 8px rgba(122, 92, 40, .35);
+    animation: unfold .8s cubic-bezier(.3, .7, .3, 1) both;
+  }
+  @keyframes unfold { from { opacity: 0; transform: translateY(40px) scale(.96); } to { opacity: 1; transform: none; } }
+  .letter-orn { display: block; width: 120px; height: 24px; margin: 0 auto 12px; color: #a07d3c; }
+  .letter h1 { margin: 0; font: 700 clamp(1.55rem, 7.2vw, 2rem)/1.15 var(--font-deco); color: var(--green-ink); text-align: center; }
+  .letter p { margin: 12px 0 0; font: 600 1.2rem/1.5 var(--font-serif); }
+  .letter .greet { margin-top: 20px; font: 700 1.75rem/1.1 var(--font-hand); color: var(--green-ink); }
+  .letter .sign { margin-top: 18px; font: 700 1.75rem/1.1 var(--font-hand); color: var(--green-ink); }
+  .letter .ps { margin-top: 14px; font: italic 600 1.08rem/1.4 var(--font-serif); color: var(--ink-dim); }
+
+  /* ---------- Zettel für die Eule ---------- */
+  .menu {
+    position: relative;
+    margin: 26px 0 0;
+    padding: 28px 16px 22px;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: rgba(13, 11, 31, .76);
+    box-shadow: inset 0 0 0 5px rgba(13, 11, 31, .76), inset 0 0 0 6px rgba(240, 198, 116, .16);
+  }
+  .menu-head { text-align: center; }
+  .menu h2 { margin: 8px 0 0; font: 700 1.55rem/1.15 var(--font-deco); color: var(--accent); transition: color .6s ease; }
+  .menu-intro { margin: 10px auto 0; max-width: 26em; color: var(--text-dim); font-size: .95rem; }
+  .course { min-width: 0; margin: 28px 0 0; padding: 0; border: 0; }
+  .course legend { display: flex; align-items: center; gap: 10px; width: 100%; padding: 0; font: 600 1.45rem/1.2 var(--font-serif); color: var(--text); }
+  .course legend::after { content: ""; flex: 1; order: 2; height: 1px; background: var(--line); }
+  .course-ico { width: 26px; height: 26px; flex: none; fill: none; stroke: var(--accent); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; transition: stroke .6s ease; }
+  .opt-tag { order: 1; padding: 3px 9px; border: 1px solid var(--line); border-radius: 999px; font: 700 .68rem/1.2 var(--font-body); letter-spacing: .12em; text-transform: uppercase; color: var(--text-dim); }
+  .course-note { margin: 10px 0 0; font-size: .92rem; font-weight: 600; line-height: 1.4; color: var(--accent); transition: color .6s ease; }
+  .opts { display: grid; gap: 8px; margin-top: 12px; }
+  .opt { position: relative; display: block; min-width: 0; }
+  .opt input { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
+  .opt-face {
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1fr);
+    gap: 2px 12px;
+    align-items: center;
+    height: 100%;
+    min-height: 56px;
+    padding: 10px 14px;
+    border: 1.5px solid rgba(197, 188, 214, .22);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, .04);
+    transition: border-color .2s ease, background-color .2s ease, box-shadow .2s ease;
+  }
+  .opt-face::before {
+    content: "";
+    grid-row: span 2;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(197, 188, 214, .55);
+    border-radius: 50%;
+    transition: border-color .2s ease, background .2s ease;
+  }
+  .opt-title { font-weight: 700; line-height: 1.3; }
+  .opt-sub { grid-column: 2; font-size: .86rem; line-height: 1.35; color: var(--text-dim); }
+  .opt input:checked + .opt-face { border-color: var(--accent); background: rgba(255, 255, 255, .09); box-shadow: 0 0 0 1px var(--accent), 0 10px 26px -14px var(--accent); }
+  .opt input:checked + .opt-face::before { border-color: var(--accent); background: radial-gradient(circle, var(--night) 0 3.5px, var(--accent) 4px); }
+  .opt input:focus-visible + .opt-face { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .opt.multi .opt-face::before { border-radius: 6px; }
+  .opt.multi input:checked + .opt-face::before { background: var(--accent) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.4 6.3l2.3 2.3 4.9-5.1' fill='none' stroke='%230d0b1f' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 12px no-repeat; }
+  .opt.surprise .opt-face { border-style: dashed; }
+
+  /* Filme als Karten */
+  .films { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .films .surprise { grid-column: 1 / -1; }
+  .film .opt-face { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 3px; min-height: 108px; padding: 12px 12px 11px; }
+  .film .opt-face::before { position: absolute; top: 11px; right: 11px; }
+  .film-n { font: 800 1.3rem/1 var(--font-body); color: var(--accent); transition: color .6s ease; }
+  .film .opt-title { margin-top: 2px; font-size: .93rem; line-height: 1.25; }
+  .film .opt-sub { margin-top: auto; font-size: .8rem; }
+
+  /* Wann */
+  .field { display: grid; gap: 6px; margin-top: 12px; }
+  .field span { font: 700 .74rem/1 var(--font-body); letter-spacing: .16em; text-transform: uppercase; color: var(--text-dim); }
+  select {
+    width: 100%;
+    min-height: 52px;
+    padding: 12px 38px 12px 14px;
+    border: 1.5px solid rgba(197, 188, 214, .3);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, .05) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%23f0c674' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") right 14px center / 12px 8px no-repeat;
+    color: var(--text);
+    font: 600 1rem/1.2 var(--font-body);
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  select option { color: #1b1530; }
+  .tip { margin: 12px 0 0; font-size: .9rem; line-height: 1.45; color: var(--text-dim); }
+  .tip b { color: var(--text); }
+
+  /* Häuser */
+  .houses { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .house { --a: #6e1d3c; --b: #e7c27a; }
+  .house[data-h="gryffindor"] { --a: #8e1418; --b: #e8ad35; }
+  .house[data-h="hufflepuff"] { --a: #f0c232; --b: #2a2520; }
+  .house[data-h="ravenclaw"] { --a: #1d3b84; --b: #c48a4c; }
+  .house[data-h="slytherin"] { --a: #1a5a38; --b: #c3ccd3; }
+  .house .opt-face { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 96px; padding: 0 12px 11px; overflow: hidden; }
+  .house .opt-face::before { position: absolute; right: 11px; bottom: 11px; }
+  .scarf { align-self: stretch; height: 12px; margin: 0 -12px 10px; background: repeating-linear-gradient(90deg, var(--a) 0 16px, var(--b) 16px 26px); }
+  .house .opt-title { font: 700 1rem/1.2 var(--font-deco); }
+  .house .opt-sub { font-size: .84rem; }
+  .hat-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    min-height: 58px;
+    margin-top: 10px;
+    padding: 8px 14px;
+    border: 1.5px dashed rgba(197, 188, 214, .4);
+    border-radius: 14px;
+    background: rgba(255, 255, 255, .03);
+    color: var(--text);
+    font: 700 1rem/1.2 var(--font-body);
+    cursor: pointer;
+  }
+  .hat-btn svg { width: 42px; height: 42px; flex: none; overflow: visible; transform-origin: 50% 90%; }
+  .hat-btn.thinking svg { animation: wobble .42s ease-in-out infinite alternate; }
+  @keyframes wobble { from { transform: rotate(-10deg); } to { transform: rotate(10deg) translateY(-2px); } }
+  .hat-say { min-height: 1.35em; margin: 10px 0 0; font: italic 700 1.2rem/1.35 var(--font-serif); color: var(--accent); text-align: center; transition: color .6s ease; }
+
+  /* ---------- Fahrkarte ---------- */
+  .ticket {
+    position: relative;
+    margin: 28px 0 0;
+    padding: 0 18px 18px;
+    overflow: hidden;
+    border-radius: 16px;
+    background: linear-gradient(150deg, #f6e9c8, #ead4a4);
+    color: #2b2016;
+    box-shadow: 0 24px 50px -26px rgba(0, 0, 0, .9);
+  }
+  .ticket::before, .ticket::after { content: ""; position: absolute; top: 58%; width: 22px; height: 22px; margin-top: -11px; border-radius: 50%; background: #13112a; }
+  .ticket::before { left: -11px; }
+  .ticket::after { right: -11px; }
+  .ticket-band { height: 12px; margin: 0 -18px 16px; background: repeating-linear-gradient(90deg, var(--band-a) 0 18px, var(--band-b) 18px 30px); }
+  .ticket-k { margin: 0; font: 800 .72rem/1 var(--font-body); letter-spacing: .24em; text-transform: uppercase; color: #7a2a1e; }
+  .ticket h3 { margin: 8px 0 0; font: 700 1.4rem/1.2 var(--font-deco); color: #4a1d14; }
+  .ticket-time { margin: 4px 0 14px; font: 800 .98rem/1.3 var(--font-body); color: #6b3a2a; }
+  .ticket dl { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 14px; margin: 0; padding-top: 12px; border-top: 2px dashed rgba(74, 29, 20, .28); }
+  .ticket dt { font: 800 .72rem/1.65 var(--font-body); letter-spacing: .12em; text-transform: uppercase; color: #8a6352; }
+  .ticket dd { margin: 0; font-weight: 700; line-height: 1.4; overflow-wrap: anywhere; }
+  .ticket dd.open { font-weight: 500; font-style: italic; color: #8a7466; }
+
+  .actions { display: grid; gap: 10px; justify-items: center; margin: 24px 0 0; padding-bottom: max(40px, env(safe-area-inset-bottom)); }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    min-height: 58px;
+    padding: 14px 24px;
+    border: 0;
+    border-radius: 999px;
+    background-color: var(--accent);
+    background-image: linear-gradient(180deg, rgba(255, 255, 255, .28), rgba(255, 255, 255, 0) 60%);
+    color: #1a1206;
+    font: 800 1.12rem/1 var(--font-body);
+    text-decoration: none;
+    box-shadow: 0 16px 34px -16px var(--accent), inset 0 -2px 0 rgba(0, 0, 0, .14);
+    cursor: pointer;
+    transition: background-color .6s ease, box-shadow .6s ease;
+  }
+  .btn svg { width: 22px; height: 22px; flex: none; }
+  .send-note { margin: 0; font-size: .86rem; color: var(--text-dim); text-align: center; }
+
+  /* ---------- Danach ---------- */
+  .after { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; min-height: 100dvh; padding: 40px 0; text-align: center; }
+  .after-seal { width: 96px; height: 96px; margin-bottom: 24px; filter: drop-shadow(0 14px 22px rgba(0, 0, 0, .5)); animation: rise 1.2s cubic-bezier(.2, .8, .2, 1) both; }
+  @keyframes rise { from { transform: translateY(50px); opacity: 0; } to { transform: none; opacity: 1; } }
+  .after h2 { margin: 14px 0 0; font: 700 clamp(1.9rem, 8.6vw, 2.5rem)/1.1 var(--font-deco); }
+  .after p { max-width: 22em; margin: 12px auto 0; color: var(--text-dim); }
+  .after .btn-text { margin-top: 26px; padding: 10px; border: 0; background: none; color: var(--accent); font: 700 1rem/1 var(--font-body); text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .envelope.landed .env-float, .tap-hint, .sky i.tw, .candle, .flame, .hat-btn.thinking svg { animation: none !important; }
+    .env-letter, .env-flap, .env-seal { transition: none; }
+    .letter, .after-seal { animation: none; }
+  }
+</style>
+</head>
+<body>
+<script>document.body.className = 'intro';</script>
+  <svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
+    <defs>
+      <radialGradient id="wax" cx=".38" cy=".32" r=".75"><stop offset="0" stop-color="#c93a4a"/><stop offset=".6" stop-color="#8e1c2c"/><stop offset="1" stop-color="#5f0f1c"/></radialGradient>
+      <radialGradient id="owl-body" cx=".45" cy=".35" r=".8"><stop offset="0" stop-color="#ffffff"/><stop offset=".7" stop-color="#f1ece2"/><stop offset="1" stop-color="#d9d0bf"/></radialGradient>
+      <linearGradient id="owl-wing" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fbf8f2"/><stop offset="1" stop-color="#d8cfbe"/></linearGradient>
+    </defs>
+  </svg>
+  <div class="glow" aria-hidden="true"></div>
+  <div class="sky" id="sky" aria-hidden="true"></div>
+  <div class="candles" id="candles" aria-hidden="true"></div>
+
+  <main class="wrap">
+    <section class="hero" id="hero" aria-labelledby="hero-title">
+      <div class="hero-text">
+        <p class="eyebrow">Eulenpost</p>
+        <h1 class="hero-title" id="hero-title">Ein Brief<br>für dich</h1>
+        <p class="hero-sub">Gerade war eine Eule da und hat ihn für dich abgegeben.</p>
+      </div>
+      <button type="button" class="envelope" id="envelope" aria-label="Brief öffnen">
+        <span class="env-float">
+          <span class="env-back"></span>
+          <span class="env-letter" aria-hidden="true">Für dich</span>
+          <span class="env-front"><span class="env-addr" aria-hidden="true">An meinen Engel<br>Lieblingsplatz auf der Couch<br>unter der Kuscheldecke</span></span>
+          <span class="env-flap"></span>
+          <span class="env-seal" aria-hidden="true">
+            <svg viewBox="0 0 64 64" focusable="false">
+              <path class="wax" d="M32 3c5 0 7 3 11 4s8 0 11 4 1 8 3 12 4 6 4 9-2 6-4 9 0 8-3 12-7 3-11 4-6 4-11 4-7-3-11-4-8 0-11-4-1-8-3-12-4-6-4-9 2-6 4-9 0-8 3-12 7-3 11-4 6-4 11-4z"/>
+              <circle class="wax-edge" cx="32" cy="32" r="19"/>
+              <path class="wax-bolt" d="M35.5 16.5 24.8 34h6.6l-3.9 13.5L40.2 29h-6.7l3.9-12.5z"/>
+            </svg>
+          </span>
+        </span>
+      </button>
+      <p class="tap-hint" id="tap-hint">Zum Öffnen tippen</p>
+    </section>
+
+    <section id="reading" hidden>
+      <article class="letter" aria-labelledby="letter-title">
+        <svg class="letter-orn" viewBox="0 0 120 24" aria-hidden="true" focusable="false"><path d="M6 12h40M74 12h40" stroke="currentColor" stroke-width="1"/><circle cx="50" cy="12" r="1.6" fill="currentColor"/><circle cx="70" cy="12" r="1.6" fill="currentColor"/><path d="M63 2 53.5 13.2h5.6L55.6 22 66.4 10.4h-5.8L63 2z" fill="currentColor"/></svg>
+        <h1 id="letter-title" tabindex="-1">Ein magisches Wochenende</h1>
+        <p class="greet">Mein Engel,</p>
+        <p>mit großer Freude teile ich dir mit, dass du für ein Harry-Potter-Wochenende aufgenommen bist. Eine Bewerbung war nicht nötig, du warst von Anfang an meine erste Wahl.</p>
+        <p>Geplant sind Couch, Kuscheldecke, Snacks und so viele Filme, wie wir schaffen. Dresscode: Jogginghose und Kuschelsocken.</p>
+        <p>Unten liegt dein Zettel für die Eule. Such dir aus, welche Filme wir schauen, wann es losgeht und was wir naschen. Um alles andere kümmere ich mich.</p>
+        <p class="sign">In Liebe</p>
+        <p class="ps">P.S. Ich erwarte deine Eule bis spätestens Freitag.</p>
+      </article>
+
+      <form class="menu" id="menu" aria-labelledby="menu-title" novalidate>
+        <div class="menu-head">
+          <p class="eyebrow">Zum Aussuchen</p>
+          <h2 id="menu-title">Dein Zettel<br>für die Eule</h2>
+          <p class="menu-intro">Kreuz an, worauf du Lust hast. Wenn ich aussuchen soll, nimm „Überrasch mich“.</p>
+        </div>
+
+        <fieldset class="course">
+          <legend><svg class="course-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3.5" y="9.5" width="17" height="10.5" rx="1.5"/><path d="M3.6 9.4 19 5.2l1 3.6L4.6 13"/><path d="M8.4 8.1l2.4 3M13.2 6.8l2.4 3"/></svg>Welche Filme?</legend>
+          <p class="course-note">Hier kannst du auch mehrere nehmen.</p>
+          <div class="opts films" id="films"></div>
+        </fieldset>
+
+        <fieldset class="course">
+          <legend><svg class="course-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3.5" y="5" width="17" height="15" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>Wann?</legend>
+          <div class="opts">
+            <label class="opt"><input type="radio" name="tag" value="sa"><span class="opt-face"><span class="opt-title">Samstag, 21. November</span><span class="opt-sub">Filmabend mit Kuscheldecke</span></span></label>
+            <label class="opt"><input type="radio" name="tag" value="so"><span class="opt-face"><span class="opt-title">Sonntag, 22. November</span><span class="opt-sub">gemütlicher Sonntag auf der Couch</span></span></label>
+            <label class="opt"><input type="radio" name="tag" value="beide"><span class="opt-face"><span class="opt-title">Beide Tage</span><span class="opt-sub">für einen richtigen Marathon</span></span></label>
+          </div>
+          <label class="field"><span>Ab wann?</span><select id="time" name="time"></select></label>
+          <p class="tip" id="tip" aria-live="polite"></p>
+        </fieldset>
+
+        <fieldset class="course">
+          <legend><svg class="course-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 9.5 7.6 20.5h8.8L18 9.5z"/><path d="M10 10l.4 10.5M14 10l-.4 10.5"/><path d="M6.4 9.5a2.3 2.3 0 0 1 1.9-3.2 2.7 2.7 0 0 1 4.6-1.5 2.7 2.7 0 0 1 4.6 1.6 2.3 2.3 0 0 1 .3 3.1"/></svg>Snacks</legend>
+          <p class="course-note">Hier kannst du auch mehrere nehmen.</p>
+          <div class="opts">
+            <label class="opt multi"><input type="checkbox" name="snacks" value="Popcorn"><span class="opt-face"><span class="opt-title">Popcorn</span><span class="opt-sub">süß, salzig oder halb-halb</span></span></label>
+            <label class="opt multi"><input type="checkbox" name="snacks" value="Butterbier"><span class="opt-face"><span class="opt-title">Butterbier</span><span class="opt-sub">selbstgemacht, warm und mit Sahnehaube</span></span></label>
+            <label class="opt multi"><input type="checkbox" name="snacks" value="Heiße Schokolade"><span class="opt-face"><span class="opt-title">Heiße Schokolade</span><span class="opt-sub">mit Marshmallows</span></span></label>
+            <label class="opt multi"><input type="checkbox" name="snacks" value="Pizza"><span class="opt-face"><span class="opt-title">Pizza</span><span class="opt-sub">bestellt oder selbstgemacht</span></span></label>
+            <label class="opt multi"><input type="checkbox" name="snacks" value="Nachos mit Käse-Dip"><span class="opt-face"><span class="opt-title">Nachos</span><span class="opt-sub">mit Käse-Dip</span></span></label>
+            <label class="opt multi"><input type="checkbox" name="snacks" value="Schokolade und Gummibärchen"><span class="opt-face"><span class="opt-title">Schokolade und Gummibärchen</span><span class="opt-sub">für zwischendurch</span></span></label>
+            <label class="opt multi surprise"><input type="checkbox" name="snacks" value="Überrasch mich"><span class="opt-face"><span class="opt-title">Überrasch mich</span><span class="opt-sub">du suchst aus</span></span></label>
+          </div>
+        </fieldset>
+
+        <fieldset class="course">
+          <legend><svg class="course-ico" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3.5 19.6c4.6 1.7 12.4 1.7 17 0"/><path d="M6.2 19.2C8 15 9.8 10 11.6 4.6c.4-1.1 1.9-1.2 2.4-.1l1.2 2.8c-.9.3-1.3 1.2-.9 2.1 1.3 3.3 2.7 6.6 4.2 9.8"/></svg>Dein Haus<span class="opt-tag">freiwillig</span></legend>
+          <p class="course-note">Such dir dein Haus aus, dann trägt die ganze Seite deine Farben.</p>
+          <div class="opts houses">
+            <label class="opt house" data-h="gryffindor"><input type="radio" name="haus" value="gryffindor"><span class="opt-face"><span class="scarf"></span><span class="opt-title">Gryffindor</span><span class="opt-sub">mutig</span></span></label>
+            <label class="opt house" data-h="hufflepuff"><input type="radio" name="haus" value="hufflepuff"><span class="opt-face"><span class="scarf"></span><span class="opt-title">Hufflepuff</span><span class="opt-sub">treu</span></span></label>
+            <label class="opt house" data-h="ravenclaw"><input type="radio" name="haus" value="ravenclaw"><span class="opt-face"><span class="scarf"></span><span class="opt-title">Ravenclaw</span><span class="opt-sub">klug</span></span></label>
+            <label class="opt house" data-h="slytherin"><input type="radio" name="haus" value="slytherin"><span class="opt-face"><span class="scarf"></span><span class="opt-title">Slytherin</span><span class="opt-sub">ehrgeizig</span></span></label>
+          </div>
+          <button type="button" class="hat-btn" id="hat-btn">
+            <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false"><ellipse cx="24" cy="40.5" rx="21" ry="5" fill="#5e4129"/><path d="M8.5 39.5C13 31 16.5 19 21.5 9.2c1.6-3.2 5.6-4.2 8.2-1.4-2.6.4-3.8 2.6-3 5.7 2.4 9 6.6 18.4 12.8 26.2-9.8 2.2-21.2 2.2-31 0z" fill="#7b5838"/><path d="M9.6 36.6c9.6 2.4 19.6 2.4 29 0l1.2 3c-10.2 2.6-21.2 2.6-31.4 0z" fill="#4b331f"/><path d="M16.5 28.5c3.6 2.6 9.4 2.8 13.4.2" fill="none" stroke="#3a2516" stroke-width="1.6" stroke-linecap="round"/><path d="M18 21.4c1.4-1.2 3.2-1.2 4.4 0M25.6 21.2c1.4-1.2 3.2-1.2 4.4 0" fill="none" stroke="#3a2516" stroke-width="1.4" stroke-linecap="round"/><path d="m28.5 13.5 3.6-.8.8 3.6-3.6.8z" fill="#9a7650"/></svg>
+            <span>Lass den Hut entscheiden</span>
+          </button>
+          <p class="hat-say" id="hat-say" aria-live="polite"></p>
+        </fieldset>
+
+        <div class="ticket" aria-live="polite">
+          <div class="ticket-band"></div>
+          <p class="ticket-k">Fahrkarte · Gleis 9¾</p>
+          <h3 id="ticket-when">Tag noch offen</h3>
+          <p class="ticket-time" id="ticket-time">Abfahrt 18:00 Uhr</p>
+          <dl>
+            <dt>Filme</dt><dd id="t-filme" class="open">noch offen</dd>
+            <dt>Laufzeit</dt><dd id="t-zeit" class="open">kommt auf die Filme an</dd>
+            <dt>Snacks</dt><dd id="t-snacks" class="open">noch offen</dd>
+            <dt>Haus</dt><dd id="t-haus" class="open">freiwillig</dd>
+          </dl>
+        </div>
+
+        <div class="actions">
+          <a class="btn" id="send" href="https://wa.me/" target="_blank" rel="noopener">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91C21.95 6.45 17.5 2 12.04 2zm0 18.15c-1.48 0-2.93-.4-4.2-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24 4.54 0 8.24 3.7 8.24 8.24 0 4.54-3.7 8.24-8.24 8.24zm4.52-6.16c-.25-.12-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.12-.17.25-.64.81-.78.97-.14.17-.29.19-.54.06-.25-.12-1.05-.39-1.99-1.23-.74-.66-1.23-1.47-1.38-1.72-.14-.25-.02-.38.11-.51.11-.11.25-.29.37-.43.12-.14.17-.25.25-.41.08-.17.04-.31-.02-.43-.06-.12-.56-1.34-.76-1.84-.2-.48-.41-.42-.56-.43h-.48c-.17 0-.43.06-.66.31-.22.25-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.12.17 1.75 2.67 4.23 3.74.59.26 1.05.41 1.41.52.59.19 1.13.16 1.56.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.14-1.18-.06-.11-.22-.17-.47-.29z"/></svg>
+            Ja, ich bin dabei
+          </a>
+          <p class="send-note">Deine Antwort fliegt per WhatsApp direkt zu mir.</p>
+        </div>
+      </form>
+    </section>
+
+    <section class="after" id="after" hidden aria-labelledby="after-title">
+      <div class="after-seal" aria-hidden="true">
+        <svg viewBox="0 0 64 64" focusable="false"><path class="wax" d="M32 3c5 0 7 3 11 4s8 0 11 4 1 8 3 12 4 6 4 9-2 6-4 9 0 8-3 12-7 3-11 4-6 4-11 4-7-3-11-4-8 0-11-4-1-8-3-12-4-6-4-9 2-6 4-9 0-8 3-12 7-3 11-4 6-4 11-4z"/><circle class="wax-edge" cx="32" cy="32" r="19"/><path class="wax-bolt" d="M35.5 16.5 24.8 34h6.6l-3.9 13.5L40.2 29h-6.7l3.9-12.5z"/></svg>
+      </div>
+      <p class="eyebrow">Deine Eule ist unterwegs</p>
+      <h2 id="after-title" tabindex="-1">Ich freu mich auf dich</h2>
+      <p id="after-text">Bis bald auf der Couch.</p>
+      <button type="button" class="btn-text" id="again">Nochmal ansehen</button>
+    </section>
+  </main>
+
+  <svg class="owl" id="owl" viewBox="0 0 120 116" aria-hidden="true" focusable="false">
+    <g id="wing-l">
+      <path class="wing" d="M47 47C40 40 25 31 4 30q3 5 6 8 2-.5 4-.4 1 3.9 4 5.9 2-.5 4-.3 1.5 3.8 4.5 5.8 2-.4 4 0 1.5 3.5 4.5 5.5 2.5.1 4.5.5 2 3 5.5 5L49 60z"/>
+      <path class="bars" d="M12 34q3.5.8 7 .2M19 38.5q3.5.8 7 .2M26.5 43q3.2.8 6.4.2M33 47.5q3 .8 6 .2"/>
+    </g>
+    <g transform="translate(120 0) scale(-1 1)">
+      <g id="wing-r">
+        <path class="wing" d="M47 47C40 40 25 31 4 30q3 5 6 8 2-.5 4-.4 1 3.9 4 5.9 2-.5 4-.3 1.5 3.8 4.5 5.8 2-.4 4 0 1.5 3.5 4.5 5.5 2.5.1 4.5.5 2 3 5.5 5L49 60z"/>
+        <path class="bars" d="M12 34q3.5.8 7 .2M19 38.5q3.5.8 7 .2M26.5 43q3.2.8 6.4.2M33 47.5q3 .8 6 .2"/>
+      </g>
+    </g>
+    <path class="tail" d="M53 80 60 95l7-15z"/>
+    <g id="owl-letter">
+      <rect class="mini-env" x="46" y="87" width="28" height="18" rx="1.5"/>
+      <path class="mini-flap" d="M46.6 87.6 60 97l13.4-9.4"/>
+      <circle class="mini-seal" cx="60" cy="96.6" r="2.6"/>
+    </g>
+    <ellipse class="torso" cx="60" cy="62" rx="16.5" ry="21"/>
+    <path class="spots" d="M51 57l2.2 1.6 2.2-1.6M58.5 54l2.2 1.6 2.2-1.6M65 58l2.2 1.6 2.2-1.6M53 65l2.2 1.6 2.2-1.6M61 63l2.2 1.6 2.2-1.6M57 71l2.2 1.6 2.2-1.6M65 69l2.2 1.6 2.2-1.6"/>
+    <circle class="head" cx="60" cy="36" r="15.5"/>
+    <ellipse class="face" cx="60" cy="38" rx="11.5" ry="9.5"/>
+    <path class="spots" d="M54 25.5l1.5 1M60 24l1.5 1M66 25.5l-1.5 1"/>
+    <g id="eyes">
+      <circle class="iris" cx="54.6" cy="36.5" r="4.3"/><circle class="pupil" cx="54.6" cy="36.5" r="2.2"/><circle class="glint" cx="53.7" cy="35.5" r=".8"/>
+      <circle class="iris" cx="65.4" cy="36.5" r="4.3"/><circle class="pupil" cx="65.4" cy="36.5" r="2.2"/><circle class="glint" cx="64.5" cy="35.5" r=".8"/>
+    </g>
+    <path class="beak" d="M58.2 40.6q1.8-1 3.6 0L60 45.4z"/>
+    <path class="feet" d="M55.5 82.5V88M53.3 83l1 5M57.7 83l-1 5M64.5 82.5V88M62.3 83l1 5M66.7 83l-1 5"/>
+  </svg>
+  <svg class="feather" id="feather" viewBox="0 0 20 46" aria-hidden="true" focusable="false"><path d="M10 2c6.5 7 7.5 22 1.2 38.5L10 44.5l-1.2-4C2.5 24 3.5 9 10 2z" fill="#f6f2ea" stroke="#cfc5b3" stroke-width=".8"/><path d="M10 6v38M10 14 6 11M10 20l4.5-3.4M10 26l-4.6-3.2" fill="none" stroke="#c5bba8" stroke-width=".7"/></svg>
+
+<script>
+(function () {
+  'use strict';
+  var KEY = 'eulenpost-hp-v1';
+  var SURPRISE = 'Überrasch mich';
+  var PAUSE = 15;
+  var FILME = [
+    { t: 'Der Stein der Weisen', m: 152 },
+    { t: 'Die Kammer des Schreckens', m: 161 },
+    { t: 'Der Gefangene von Askaban', m: 142 },
+    { t: 'Der Feuerkelch', m: 157 },
+    { t: 'Der Orden des Phönix', m: 138 },
+    { t: 'Der Halbblutprinz', m: 153 },
+    { t: 'Die Heiligtümer des Todes, Teil 1', m: 146 },
+    { t: 'Die Heiligtümer des Todes, Teil 2', m: 130 }
+  ];
+  var TAGE = {
+    sa: { kurz: 'Sa, 21. Nov.', lang: 'am Samstag, 21. November' },
+    so: { kurz: 'So, 22. Nov.', lang: 'am Sonntag, 22. November' },
+    beide: { kurz: 'Sa + So, 21./22. Nov.', lang: 'am Samstag und Sonntag' }
+  };
+  var HAEUSER = { gryffindor: ['Gryffindor', '🦁'], hufflepuff: ['Hufflepuff', '🦡'], ravenclaw: ['Ravenclaw', '🦅'], slytherin: ['Slytherin', '🐍'] };
+  var $ = function (id) { return document.getElementById(id); };
+  var reduced = function () { return !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches); };
+  var seen = false;
+
+  /* ---------- Sterne und Kerzen ---------- */
+  (function sky() {
+    var html = '', seed = 7;
+    var rnd = function () { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
+    for (var i = 0; i < 90; i++) {
+      var s = (rnd() * 1.6 + .8).toFixed(1);
+      html += '<i' + (i % 4 === 0 ? ' class="tw"' : '') + ' style="left:' + (rnd() * 100).toFixed(2) + '%;top:' + (rnd() * 100).toFixed(2) +
+        '%;width:' + s + 'px;height:' + s + 'px;animation-delay:-' + (rnd() * 3).toFixed(1) + 's"></i>';
+    }
+    $('sky').innerHTML = html;
+    html = '';
+    [[6, 7], [18, 15], [30, 4], [42, 12], [55, 3], [67, 11], [79, 5], [91, 14], [7, 86], [93, 83], [20, 94], [79, 95]].forEach(function (p) {
+      html += '<div class="candle" style="left:' + p[0] + '%;top:' + p[1] + '%;--h:' + (30 + rnd() * 26).toFixed(0) + 'px;--s:' + (.7 + rnd() * .45).toFixed(2) +
+        ';--d:' + (4 + rnd() * 3).toFixed(1) + 's;--dl:-' + (rnd() * 4).toFixed(1) + 's;--o:' + (.55 + rnd() * .4).toFixed(2) + '"><i class="flame"></i></div>';
+    });
+    $('candles').innerHTML = html;
+  })();
+
+  /* ---------- Hilfen ---------- */
+  function dauer(min) {
+    var h = Math.floor(min / 60), m = min % 60;
+    return (h ? h + ' Std.' : '') + (h && m ? ' ' : '') + (m ? m + ' Min.' : '');
+  }
+  function uhr(min) { min = ((min % 1440) + 1440) % 1440; return ('0' + Math.floor(min / 60)).slice(-2) + ':' + ('0' + (min % 60)).slice(-2); }
+  function vals(name) { return Array.prototype.map.call(document.querySelectorAll('input[name="' + name + '"]:checked'), function (el) { return el.value; }); }
+  function val(name) { var el = document.querySelector('input[name="' + name + '"]:checked'); return el ? el.value : ''; }
+
+  /* ---------- Filme und Uhrzeiten ---------- */
+  $('films').innerHTML = FILME.map(function (f, i) {
+    return '<label class="opt multi film"><input type="checkbox" name="filme" value="' + (i + 1) + '"><span class="opt-face"><span class="film-n">' + (i + 1) +
+      '</span><span class="opt-title">' + f.t + '</span><span class="opt-sub">' + dauer(f.m) + '</span></span></label>';
+  }).join('') + '<label class="opt multi surprise"><input type="checkbox" name="filme" value="' + SURPRISE + '"><span class="opt-face"><span class="opt-title">' + SURPRISE +
+    '</span><span class="opt-sub">du suchst aus</span></span></label>';
+  (function times() {
+    var out = [];
+    for (var m = 12 * 60; m <= 21 * 60; m += 30) out.push('<option value="' + uhr(m) + '"' + (m === 18 * 60 ? ' selected' : '') + '>' + uhr(m) + ' Uhr</option>');
+    $('time').innerHTML = out.join('');
+  })();
+
+  /* ---------- Auswahl, Fahrkarte und Nachricht ---------- */
+  function filmNums() { return vals('filme').filter(function (v) { return v !== SURPRISE; }).map(Number).sort(function (a, b) { return a - b; }); }
+  function filmText() {
+    var v = vals('filme');
+    if (!v.length) return '';
+    if (v.indexOf(SURPRISE) >= 0) return SURPRISE;
+    var n = filmNums();
+    if (n.length === 1) return 'Teil ' + n[0] + ' (' + FILME[n[0] - 1].t + ')';
+    if (n.length === FILME.length) return 'alle acht Teile';
+    return 'Teil ' + n.slice(0, -1).join(', ') + ' und ' + n[n.length - 1];
+  }
+  function laufzeit() {
+    var n = filmNums();
+    return n.length ? n.reduce(function (s, i) { return s + FILME[i - 1].m; }, 0) + PAUSE * (n.length - 1) : 0;
+  }
+  function startMin() { var p = $('time').value.split(':'); return +p[0] * 60 + +p[1]; }
+  function punkt(s) { return /\.$/.test(s) ? s : s + '.'; }
+  function tipText() {
+    var z = laufzeit(), t = val('tag'), n = filmNums().length;
+    if (!z) return punkt('Kleiner Tipp: Alle acht Filme zusammen dauern ' + dauer(FILME.reduce(function (s, f) { return s + f.m; }, 0)));
+    var s = punkt(n > 1 ? 'Mit kurzen Pausen dazwischen sind das ' + dauer(z) : 'Der Film dauert ' + dauer(z));
+    if (t === 'beide') return s + (n > 1 ? ' Schön verteilt auf zwei Tage.' : ' Da passt am zweiten Tag locker noch einer rein.');
+    var end = startMin() + z;
+    s += ' Der Abspann läuft dann gegen ' + uhr(end) + ' Uhr' + (end >= 1440 ? ' nachts' : '') + '.';
+    if (end >= 1500) s += ' Das wird eine lange Nacht. Vielleicht lieber beide Tage?';
+    return s;
+  }
+  function message() {
+    var t = val('tag'), h = val('haus');
+    var lines = ['Ja, ich bin dabei! ⚡'];
+    lines.push('Harry-Potter-Wochenende: ' + (t ? TAGE[t].kurz + ' ab ' + $('time').value + ' Uhr' : 'ab ' + $('time').value + ' Uhr, den Tag sprechen wir noch ab'));
+    lines.push('Filme: ' + (filmText() || SURPRISE));
+    lines.push('Snacks: ' + (vals('snacks').join(' + ') || SURPRISE));
+    if (h) lines.push('Mein Haus: ' + HAEUSER[h][0] + ' ' + HAEUSER[h][1]);
+    lines.push('Ich freu mich auf dich ❤️');
+    return lines.join('\n');
+  }
+  function setDD(id, text, fallback) { var dd = $(id); dd.textContent = text || fallback; dd.classList.toggle('open', !text); }
+  function update() {
+    var z = laufzeit(), h = val('haus');
+    setDD('t-filme', filmText(), 'noch offen');
+    setDD('t-zeit', z ? dauer(z) + (filmNums().length > 1 ? ' mit Pausen' : '') : '', 'kommt auf die Filme an');
+    setDD('t-snacks', vals('snacks').join(' + '), 'noch offen');
+    setDD('t-haus', h ? HAEUSER[h][0] : '', 'freiwillig');
+    $('ticket-when').textContent = val('tag') ? TAGE[val('tag')].kurz : 'Tag noch offen';
+    $('ticket-time').textContent = 'Abfahrt ' + $('time').value + ' Uhr';
+    $('tip').textContent = tipText();
+    if (h) document.body.setAttribute('data-haus', h); else document.body.removeAttribute('data-haus');
+    $('send').href = 'https://wa.me/?text=' + encodeURIComponent(message());
+    save();
+  }
+  function save() {
+    try {
+      localStorage.setItem(KEY, JSON.stringify({
+        f: vals('filme'), s: vals('snacks'), tag: val('tag'), haus: val('haus'), t: $('time').value,
+        open: document.body.classList.contains('reading'), seen: seen
+      }));
+    } catch (e) { /* privater Modus */ }
+  }
+  function tick(name, list) {
+    (list || []).forEach(function (v) {
+      if (!v) return;
+      var el = document.querySelector('input[name="' + name + '"][value="' + String(v).replace(/["\\]/g, '') + '"]');
+      if (el) el.checked = true;
+    });
+  }
+  function restore() {
+    var s = null;
+    try { s = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { s = null; }
+    if (!s) return null;
+    tick('filme', s.f); tick('snacks', s.s); tick('tag', [s.tag]); tick('haus', [s.haus]);
+    if (s.t && $('time').querySelector('option[value="' + s.t + '"]')) $('time').value = s.t;
+    return s;
+  }
+
+  /* ---------- Die Eule: fliegt herein, lässt den Brief fallen, fliegt weiter ---------- */
+  var owl = $('owl'), feather = $('feather'), env = $('envelope');
+  var wingL = $('wing-l'), wingR = $('wing-r'), eyes = $('eyes');
+  var CARRY = .3, T_IN = 1900, T_DROP = 2500, T_FALL = 650, T_BOUNCE = 220, T_OUT = 1400, T_FEATHER = 2650, FEATHER_DUR = 3200;
+  var T_END = Math.max(T_DROP + T_OUT, T_FEATHER + FEATHER_DUR);
+  var G = null, clone = null, raf = 0, running = false, landed = false;
+
+  function bez(p0, p1, p2, p3, u) {
+    var v = 1 - u, a = v * v * v, b = 3 * v * v * u, c = 3 * v * u * u, d = u * u * u;
+    return { x: a * p0.x + b * p1.x + c * p2.x + d * p3.x, y: a * p0.y + b * p1.y + c * p2.y + d * p3.y };
+  }
+  function clamp01(u) { return u < 0 ? 0 : u > 1 ? 1 : u; }
+  function easeOut(u) { return 1 - Math.pow(1 - u, 3); }
+  function easeIn(u) { return u * u * u; }
+  function easeInOut(u) { return u < .5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2; }
+  function wings(a) { var tr = 'rotate(' + a.toFixed(1) + ' 47 54)'; wingL.setAttribute('transform', tr); wingR.setAttribute('transform', tr); }
+  function blink(s) { if (s >= 1) eyes.removeAttribute('transform'); else eyes.setAttribute('transform', 'translate(0 36.5) scale(1 ' + s + ') translate(0 -36.5)'); }
+  function place(el, x, y, rot, sc, ox, oy) {
+    el.style.transform = 'translate(' + (x - ox).toFixed(1) + 'px,' + (y - oy).toFixed(1) + 'px) rotate(' + rot.toFixed(2) + 'deg) scale(' + sc.toFixed(3) + ')';
+  }
+  function owlSize() {
+    var k = (parseFloat(getComputedStyle(owl).width) || 170) / 120;
+    var feet = { x: 60 * k, y: 90 * k };
+    owl.style.transformOrigin = feet.x + 'px ' + feet.y + 'px';
+    return { k: k, feet: feet };
+  }
+  function measure() {
+    var W = window.innerWidth, H = window.innerHeight, r = env.getBoundingClientRect(), o = owlSize();
+    var hover = { x: r.left + r.width / 2, y: Math.max(r.top - 8, o.feet.y + 8) };
+    G = {
+      k: o.k, feet: o.feet, hover: hover,
+      env: { x: r.left + r.width / 2, y: r.top + r.height / 2, w: r.width, h: r.height },
+      p0: { x: W + 120 * o.k, y: hover.y - Math.min(220, H * .3) },
+      c1: { x: W * .78, y: hover.y - Math.min(230, H * .32) },
+      c2: { x: hover.x + W * .32, y: hover.y + 40 },
+      e1: { x: hover.x - 20, y: hover.y - 70 },
+      e2: { x: W * .22, y: hover.y - 190 },
+      e3: { x: -130 * o.k, y: hover.y - Math.max(320, H * .45) },
+      fx: hover.x - 42 * o.k, fy: hover.y - 64 * o.k
+    };
+    if (clone && (clone.style.width !== r.width + 'px')) { clone.style.width = r.width + 'px'; clone.style.height = r.height + 'px'; }
+  }
+  function frame(t) {
+    measure();
+    var F, sc = 1, tilt = 0, freq, amp, u;
+    if (t < T_IN) {
+      u = easeOut(t / T_IN);
+      F = bez(G.p0, G.c1, G.c2, G.hover, u);
+      sc = .7 + .3 * u; tilt = -16 * (1 - u) + 5 * Math.sin(u * Math.PI); freq = 3.2; amp = 30;
+    } else if (t < T_DROP) {
+      u = (t - T_IN) / (T_DROP - T_IN);
+      F = { x: G.hover.x, y: G.hover.y + Math.sin(u * Math.PI * 2) * 4 };
+      tilt = Math.sin(u * Math.PI * 2) * 2; freq = 4.6; amp = 34;
+    } else {
+      u = clamp01((t - T_DROP) / T_OUT);
+      F = bez(G.hover, G.e1, G.e2, G.e3, easeIn(u));
+      sc = 1 - .25 * u; tilt = -14 * Math.min(1, u * 2); freq = 4; amp = 32;
+    }
+    wings(6 + amp * Math.sin(t / 1000 * freq * Math.PI * 2));
+    blink(t > 2050 && t < 2170 ? .12 : 1);
+    place(owl, F.x, F.y, tilt, sc, G.feet.x, G.feet.y);
+    owl.style.visibility = t - T_DROP >= T_OUT ? 'hidden' : 'visible';
+
+    if (clone) {
+      var hw = G.env.w / 2, hh = G.env.h / 2;
+      if (t < T_DROP) {
+        var s = CARRY * sc;
+        place(clone, F.x, F.y + G.env.h * s / 2 - 4 * G.k, tilt * .6 + Math.sin(t / 1000 * 2.6 * Math.PI) * 3, s, hw, hh);
+      } else if (t < T_DROP + T_FALL + T_BOUNCE) {
+        var v = clamp01((t - T_DROP) / T_FALL), y0 = G.hover.y + G.env.h * CARRY / 2 - 4 * G.k;
+        var y = y0 + (G.env.y - y0) * v * v;
+        if (t > T_DROP + T_FALL) y -= Math.sin((t - T_DROP - T_FALL) / T_BOUNCE * Math.PI) * 7;
+        place(clone, G.env.x, y, -7 * (1 - v), CARRY + (1 - CARRY) * easeInOut(v), hw, hh);
+      } else land();
+    }
+
+    var fv = (t - T_FEATHER) / FEATHER_DUR;
+    if (fv > 0 && fv < 1) {
+      var sway = Math.sin(fv * Math.PI * 2.2);
+      place(feather, G.fx + sway * 22 - fv * 30, G.fy + fv * 210, sway * 38, 1, 8, 4);
+      feather.style.opacity = fv < .7 ? 1 : (1 - (fv - .7) / .3).toFixed(2);
+      feather.style.visibility = 'visible';
+    } else feather.style.visibility = 'hidden';
+  }
+  function land() {
+    if (landed) return;
+    landed = true;
+    if (clone) { clone.parentNode.removeChild(clone); clone = null; }
+    document.body.classList.remove('intro');
+    env.classList.add('landed');
+    seen = true;
+    save();
+  }
+  function endIntro() {
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0; running = false;
+    land();
+    owl.style.visibility = 'hidden';
+    feather.style.visibility = 'hidden';
+  }
+  function startIntro() {
+    if (reduced()) { land(); return; }
+    document.body.classList.add('intro');
+    clone = env.cloneNode(true);
+    Array.prototype.forEach.call(clone.querySelectorAll('[id]'), function (el) { el.removeAttribute('id'); });
+    clone.removeAttribute('id');
+    clone.classList.add('fly');
+    clone.setAttribute('aria-hidden', 'true');
+    clone.tabIndex = -1;
+    document.body.appendChild(clone);
+    measure();
+    frame(0);
+    var t = 0, last = 0, speed = seen ? 1.7 : 1;
+    running = true;
+    raf = requestAnimationFrame(function step(now) {
+      if (!running) return;
+      t += Math.min(50, last ? now - last : 16) * speed;
+      last = now;
+      frame(Math.min(t, T_END));
+      if (t < T_END) raf = requestAnimationFrame(step); else endIntro();
+    });
+  }
+
+  /* Nach der Antwort trägt die Eule den Brief davon */
+  function flyAway() {
+    if (reduced()) return;
+    if (raf) cancelAnimationFrame(raf);
+    var o = owlSize(), W = window.innerWidth, H = window.innerHeight;
+    var p0 = { x: W * .12, y: H + 140 * o.k }, p1 = { x: W * .2, y: H * .7 }, p2 = { x: W * .92, y: H * .8 }, p3 = { x: W + 150 * o.k, y: -170 * o.k };
+    var t = 0, last = 0, D = 2700;
+    owl.classList.add('mit-brief');
+    running = true;
+    raf = requestAnimationFrame(function step(now) {
+      if (!running) return;
+      t += Math.min(50, last ? now - last : 16);
+      last = now;
+      var u = clamp01(t / D), F = bez(p0, p1, p2, p3, easeInOut(u));
+      wings(6 + 32 * Math.sin(t / 1000 * 4.2 * Math.PI * 2));
+      place(owl, F.x, F.y, -6 + 18 * u, .8 + .25 * Math.sin(u * Math.PI), o.feet.x, o.feet.y);
+      owl.style.visibility = 'visible';
+      if (u < 1) raf = requestAnimationFrame(step);
+      else { owl.style.visibility = 'hidden'; owl.classList.remove('mit-brief'); running = false; raf = 0; }
+    });
+  }
+  function stopOwl() {
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0; running = false;
+    owl.style.visibility = 'hidden';
+    owl.classList.remove('mit-brief');
+  }
+
+  /* ---------- Brief öffnen ---------- */
+  var opening = false;
+  function openLetter(instant) {
+    if (opening) return;
+    opening = true;
+    env.classList.add('open');
+    document.body.classList.add('opening');
+    var show = function () {
+      document.body.classList.add('reading');
+      $('reading').hidden = false;
+      try { $('letter-title').focus({ preventScroll: true }); } catch (e) { /* egal */ }
+      if (!instant) {
+        var y = $('reading').getBoundingClientRect().top + window.scrollY;
+        window.scrollTo({ top: Math.max(0, y - 90), behavior: reduced() ? 'auto' : 'smooth' });
+      }
+      save();
+    };
+    if (instant || reduced()) show(); else setTimeout(show, 1650);
+  }
+
+  /* ---------- Der Hut entscheidet ---------- */
+  var hatBusy = false;
+  function hatSay(text) { $('hat-say').textContent = text; }
+  $('hat-btn').addEventListener('click', function () {
+    if (hatBusy) return;
+    hatBusy = true;
+    var btn = $('hat-btn'), cur = val('haus');
+    var keys = Object.keys(HAEUSER).filter(function (k) { return k !== cur; });
+    var pick = keys[Math.floor(Math.random() * keys.length)];
+    var d = reduced() ? 400 : 2100;
+    btn.classList.add('thinking');
+    btn.setAttribute('aria-busy', 'true');
+    hatSay('Hmm … lass mich überlegen …');
+    setTimeout(function () { hatSay('Mutig? Treu? Klug? Ehrgeizig? …'); }, d * .45);
+    setTimeout(function () {
+      btn.classList.remove('thinking');
+      btn.removeAttribute('aria-busy');
+      document.querySelector('input[name="haus"][value="' + pick + '"]').checked = true;
+      hatSay('Ich hab’s: ' + HAEUSER[pick][0] + '!');
+      update();
+      hatBusy = false;
+    }, d);
+  });
+
+  /* ---------- Abschicken und danach ---------- */
+  function showAfter() {
+    var t = val('tag');
+    $('hero').hidden = true;
+    $('reading').hidden = true;
+    $('after').hidden = false;
+    $('after-text').textContent = 'Wir sehen uns ' + (t ? TAGE[t].lang : 'am Wochenende') + ' ab ' + $('time').value + ' Uhr. Die Kuscheldecke liegt schon bereit.';
+    window.scrollTo(0, 0);
+    try { $('after-title').focus({ preventScroll: true }); } catch (e) { /* egal */ }
+    flyAway();
+  }
+
+  var st = restore();
+  seen = !!(st && st.seen);
+  update();
+  if (st && st.open) { land(); openLetter(true); } else startIntro();
+
+  $('hero').addEventListener('click', function () { if (running && !landed) endIntro(); });
+  env.addEventListener('click', function () { if (landed) openLetter(false); });
+  $('menu').addEventListener('change', function (e) {
+    var t = e.target;
+    /* Mehrere gehen, nur „Überrasch mich“ steht für sich allein */
+    if ((t.name === 'filme' || t.name === 'snacks') && t.checked) {
+      Array.prototype.forEach.call(document.querySelectorAll('input[name="' + t.name + '"]'), function (el) {
+        if (el !== t && (t.value === SURPRISE || el.value === SURPRISE)) el.checked = false;
+      });
+    }
+    if (t.name === 'haus') hatSay('');
+    update();
+  });
+  $('menu').addEventListener('submit', function (e) { e.preventDefault(); });
+  $('send').addEventListener('click', function () {
+    update();
+    setTimeout(showAfter, 700);
+  });
+  $('again').addEventListener('click', function () {
+    stopOwl();
+    $('after').hidden = true;
+    $('hero').hidden = false;
+    $('reading').hidden = false;
+    $('menu').scrollIntoView({ block: 'start' });
+  });
+})();
+</script>
+</body>
+</html>
